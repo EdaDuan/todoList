@@ -1,8 +1,36 @@
-body {
-  background: #eee;
+/* 顶部导航栏部分 */
+.nav{
+  width: 100%;
+  margin: 0 auto;
+  height: 60px;
+  background: #AAD2C7;
 }
-.imgs {
-  background-image: url('../imgs/morning.jpeg');
-  width: 100px;
-  height: 100px;
+.nav-ul {
+  height: 100%;
+  padding: 0 200px;
+}
+.nav-li {
+  float: left;
+  max-width: 100px;
+  line-height: 60px;
+  box-sizing: border-box;
+  list-style: none;
+  padding-right: 20px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  /* background: pink; */
+}
+.nav-a {
+  font-size: 16px;
+  /* color: ; */
+}
+
+/* 内容部分 */
+.container {
+  width: 100%;
+}
+.con-box {
+  padding: 40px 200px 0;
+  background: #eee;
 }
