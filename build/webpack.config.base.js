@@ -1,5 +1,6 @@
 const path = require('path')
 const rootPath = path.join(__dirname, "../");
+
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -23,10 +24,13 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"],
-      },
+      // {
+      //   test: /\.css$/,
+      //   use: [
+      //     MiniCssExtractPlugin.loader,
+      //     "style-loader",
+      //     "css-loader"],
+      // },
       {
         test: /\.(png|jpe?g|gif|svg)$/,
         use: [
@@ -35,7 +39,7 @@ module.exports = {
             options: {
               name: "[name].[contenthash].[ext]",
               outputPath: "static/img",
-              esModule: false, // <- here
+              esModule: false,
             },
           },
         ],
@@ -53,7 +57,8 @@ module.exports = {
     ]
   },
   devServer: {
-    contentBase: path.join(__dirname, "public"),
+    contentBase: './dist',
+    inline: true,
     port: 8080, // 启动服务端口
   },
 }
