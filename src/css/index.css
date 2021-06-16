@@ -1,0 +1,8 @@
+body {
+  background: #eee;
+}
+.imgs {
+  background-image: url('../imgs/morning.jpeg');
+  width: 100px;
+  height: 100px;
+}
