@@ -12,23 +12,29 @@
   <header>
     <div class="nav">
       <ul class="nav-ul">
-        <li class="nav-li nav-todoList"><a href="#" class="nav-a">今日待办</a></li>
-        <li class="nav-li nav-notDone"><a href="#" class="nav-a">未完成</a></li>
-        <li class="nav-li nav-all"><a href="#" class="nav-a">全部</a></li>
+        <li class="nav-li nav-todayTask"><a href="#" class="nav-a">今日待办</a></li>
+        <li class="nav-li nav-allNotDone"><a href="#" class="nav-a">未完成</a></li>
+        <li class="nav-li nav-allTask"><a href="#" class="nav-a">全部</a></li>
       </ul>
-      <button class="btn">点击</button>
     </div>
   </header>
   <section>
     <div class="container">
-      <div class="con-box con-todoList">
-        <button>New+</button>
-        <div class="con-tasks con-notDone">
-          待办事项
+      <div class="con-box con-todayTask">
+        <input type="button" value="new+" onclick="ShowModel();" />
+        <div class="con-tasks con-todo">
+          <span>Todo</span>
+          <input type="button" value="全选" onclick="ChooseAll();" />
         </div>
         <div class="con-tasks con-Done">
           已完成
         </div>
+      </div>
+      <div class="con-box con-allNotDone">
+        <p>未完成</p>
+      </div>
+      <div class="con-box con-allTask">
+        <p>所有待办项</p>
       </div>
     </div>
   </section>
