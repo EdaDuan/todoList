@@ -1,32 +1,39 @@
-import './css/global.css'
-import './css/index.css'
-import './util/init'
-let liitem = document.getElementsByClassName("nav-li");
-let boxitem = document.getElementsByClassName("con-box");
-let aitem = document.getElementsByClassName("nav-a");
-boxitem[0].style.display = "block";
-liitem[0].style.borderTop = "3px solid #ff8400";
-liitem[0].style.backgroundColor = "white";
-aitem[0].style.color = "#ff8400";
+// 全局样式
+import "./css/global.css";
+// 局部样式
+import "./css/index.css";
+// json数据模拟
+import { tasks } from "../mock/export";
+// 初始化页面自定义函数自调用
+import init from "./js/init";
+// 导航栏切换
+import navSwitch from "./js/util/navSwitch";
+import checkBox from "./js/util/checkBox";
+// 弹窗
+import model from "./js/util/model";
 
-for (var i = 0; i < liitem.length; i++) {
-	(function(i){
-		liitem[i].onmouseover = function() {
-			for (var j = 0; j < boxitem.length; j++) {
-				boxitem[j].style.display = "none";
-				liitem[j].style.borderTop = "transparent";
-				liitem[j].style.backgroundColor = "transparent";
-        aitem[j].style.color = "#fff";
-			}
-			boxitem[i].style.display = "block";
-			liitem[i].style.borderTop = "3px solid #ff8400";
-			liitem[i].style.backgroundColor = "white";
-      aitem[i].style.color = "#ff8400";
-			if (i==0) {
-				liitem[i].style.borderLeft = "none";
-        liitem[i].style.borderLeft = "none";
-			}
-		}
-	})(i)
-}
+// 初始化页面
+init(tasks);
+// 导航栏
+navSwitch();
+checkBox();
 
+// 新建todoList
+document
+  .getElementsByClassName("tasksNewDialog")[0]
+  .addEventListener("click", () => {
+    model("tasksNewDialog");
+  });
+
+// 点击弹窗以外部分 关闭弹窗
+let diologBox = document.getElementsByClassName("diolog-box")[0];
+diologBox.addEventListener("click", () => {
+  diologBox.style.display = "none";
+});
+
+// 阻止弹窗的冒泡事件
+document
+  .getElementsByClassName("diolog-con")[0]
+  .addEventListener("click", (e) => {
+    window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
+  });
