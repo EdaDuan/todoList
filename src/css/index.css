@@ -38,12 +38,6 @@
   border-top: transparent;
   background-color: transparent;
 }
-.navaMouseOver {
-  color: #ff8400;
-}
-.navaMouseOut {
-  color: #fff;
-}
 
 /* 内容部分 */
 .container {
@@ -61,6 +55,7 @@
 .con-box {
   padding-top: 20px;
   display: none;
+  /* background: #eee; */
 }
 .con-tasks-newBg {
   width: 100px;
@@ -92,6 +87,8 @@
   right: 0px;
   top: 18px;
 }
+
+/* 今日待办 */
 .con-tasks-ul {
   position: absolute;
   top: 60px;
@@ -100,18 +97,77 @@
   right: 0;
   overflow-y: scroll;
 }
-
-/* 今日待办 */
 .con-task-li {
+  position: relative;
   display: block;
   line-height: 40px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
   color: #666;
   text-decoration: none;
   text-align: left;
   border-bottom: 1px solid #666;
-  /* background: #ffffff; */
+  /* background: #eee; */
+}
+#btnTodoOperate + label,
+#btnDoneOperate + label {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  right: 40px;
+  cursor: pointer;
+  border: 1px solid #666;
+}
+.con-task-li input,
+#btnTodoOperate,
+#btnDoneOperate {
+  visibility: hidden;
+}
+
+#btnTodoOperate:checked + label::before,
+#btnDoneOperate:checked + label::before {
+  display: block;
+  content: "\2714";
+  text-align: center;
+  font-size: 16px;
+  color: #ff8400;
+}
+.con-task-li label {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  cursor: pointer;
+  border: 1px solid #666;
+}
+.con-task-li input:checked + label::before {
+  position: absolute;
+  content: "\2714";
+  font-size: 16px;
+  top: -10px;
+  left: 4px;
+  color: #ff8400;
+}
+.con-task-li span {
+  padding-left: 40px;
+}
+.con-task-li button {
+  float: right;
+  width: 60px;
+  height: 40px;
+  margin-left: 10px;
+  font-size: 16px;
+  border: none;
+  outline: 0;
+  color: #666;
+  background: #fff;
+  cursor: pointer;
 }
 
 /* 弹窗 */

@@ -17,7 +17,9 @@
           <li class="nav-li nav-allNotDone">
             <a href="#" class="nav-a">未完成</a>
           </li>
-          <li class="nav-li nav-allTask"><a href="#" class="nav-a">全部</a></li>
+          <li class="nav-li nav-allTask">
+            <a href="#" class="nav-a">全部</a>
+          </li>
         </ul>
       </div>
     </header>
@@ -26,16 +28,13 @@
       <div class="container">
         <div class="con-box con-todayTask">
           <div class="con-tasks-newBg">
-            <input
-              class="tasksNewDialog con-tasks-tip"
-              type="button"
-              value="新建+"
-            />
+            <button class="tasksNewDialog con-tasks-tip">新建+</button>
           </div>
           <div class="con-tasks con-todo">
             <span class="con-tasks-tip">Todo</span>
             <span class="con-tasks-tip con-tasks-choose">
               <input id="btnTodoOperate" type="checkbox" value="选择" />
+              <label for="btnTodoOperate"></label>
               全选
             </span>
             <ul class="con-tasks-ul con-todo-ul"></ul>
@@ -44,6 +43,7 @@
             <span class="con-tasks-tip">Done</span>
             <span class="con-tasks-tip con-tasks-choose">
               <input id="btnDoneOperate" type="checkbox" value="选择" />
+              <label for="btnDoneOperate"></label>
               全选
             </span>
             <ul class="con-tasks-ul con-done-ul"></ul>
