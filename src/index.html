@@ -34,7 +34,7 @@
             <span class="con-tasks-tip">Todo</span>
             <span class="con-tasks-tip con-tasks-choose">
               <input id="btnTodoOperate" type="checkbox" value="选择" />
-              <label for="btnTodoOperate"></label>
+              <label class="taskLabel" for="btnTodoOperate"></label>
               全选
             </span>
             <ul class="con-tasks-ul con-todo-ul"></ul>
@@ -43,7 +43,7 @@
             <span class="con-tasks-tip">Done</span>
             <span class="con-tasks-tip con-tasks-choose">
               <input id="btnDoneOperate" type="checkbox" value="选择" />
-              <label for="btnDoneOperate"></label>
+              <label class="taskLabel" for="btnDoneOperate"></label>
               全选
             </span>
             <ul class="con-tasks-ul con-done-ul"></ul>
@@ -64,11 +64,11 @@
         <span class="diolog-tip"></span>
         <div class="diolog-input">
           <label for="">待办项：</label>
-          <input class="diolog-input-name" type="text" />
+          <input id="diolog-input-name" type="text" />
         </div>
         <div class="diolog-input">
           <label for="">时间：</label>
-          <input class="diolog-input-time" type="text" />
+          <input id="diolog-input-time" type="text" />
         </div>
         <div class="diolog-input-btn">
           <button class="diolog-sure">确认</button>

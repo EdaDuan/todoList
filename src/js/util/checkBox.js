@@ -1,55 +1,45 @@
+import { initList } from "../init";
 const checkBox = () => {
-  let todoUlItem = document.getElementsByClassName("con-todo-ul")[0];
-  let doneUlItem = document.getElementsByClassName("con-done-ul")[0];
-  console.log("doneUlItem: ", doneUlItem);
-  let conTodoLi = document.querySelectorAll(".con-todo-li");
-  console.log("conTodoLi: ", conTodoLi);
-  let conDoneLi = document.querySelectorAll(".con-done-li");
+  let listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
+  let todayTask = document.getElementsByClassName("con-todayTask")[0];
+  let todoList = document.getElementsByName("todoList");
+  let doneList = document.getElementsByName("doneList");
   // 今日待办中的todoList
-  document.getElementById("btnTodoOperate").addEventListener("click", () => {
-    // 创建文档片段
-    let fragment = document.createDocumentFragment();
-    for (let i = 0; i < conTodoLi.length; i++) {
-      conTodoLi[i].children[0].checked = true;
-      conTodoLi[i].children[0].name = "doneList";
-      conTodoLi[i].classList.remove("con-todo-li");
-      conTodoLi[i].classList.add("con-done-li");
-      fragment.appendChild(conTodoLi[i]);
+  document.getElementById("btnTodoOperate").addEventListener("click", (e) => {
+    if (todoList.length !== 0) {
+      console.log("当todo有数据时");
+      for (let i = 0; i < listItem.length; i++) {
+        if (listItem[i].status) {
+          listItem[i].status = false;
+        }
+      }
+      localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
+      initList(); //每次保存完都刷新页面
     }
-    doneUlItem.appendChild(fragment);
   });
-
   // 今日待办中的doneList
-  document.getElementById("btnDoneOperate").addEventListener("click", () => {
-    let fragment = document.createDocumentFragment();
-    for (let i = 0; i < conDoneLi.length; i++) {
-      conDoneLi[i].children[0].checked = false;
-      conDoneLi[i].children[0].name = "todoList";
-      conDoneLi[i].classList.remove("con-done-li");
-      conDoneLi[i].classList.add("con-todo-li");
-      fragment.appendChild(conDoneLi[i]);
-    }
-    todoUlItem.appendChild(fragment);
-  });
-  todoUlItem.addEventListener("click", (e) => {
-    if (e.target.type === "checkbox") {
-      console.log(
-        "🚀 ~ file: checkBox.js ~ line 27 ~ document.getElementsByClassName ~ e",
-        e.path[1]
-      );
-      e.target.checked = true;
-      e.target.name = "doneList";
-      e.path[1].classList.remove("con-todo-li");
-      e.path[1].classList.add("con-done-li");
-      doneUlItem.appendChild(e.path[1]);
+  document.getElementById("btnDoneOperate").addEventListener("click", (e) => {
+    if (doneList.length !== 0) {
+      console.log("当done有数据时");
+      for (let i = 0; i < listItem.length; i++) {
+        if (!listItem[i].status) {
+          listItem[i].status = true;
+        }
+      }
+      localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
+      initList(); //每次保存完都刷新页面
     }
   });
-  // function cancelChooseColor( clickId ){
-  //   //选中点击的元素
-  //   $(clickId)[0].checked=true;
-  //   //获取选中元素的color值
-  //   // var color =$(clickId).val();
-  //   // $('#color-input-diy-value').val(color);
-  // }
+  todayTask.addEventListener("click", (e) => {
+    if (e.target.nodeName === "INPUT") {
+      listItem.map((item) => {
+        if (item.taskId === Number(e.target.id)) {
+          item.status = !item.status;
+        }
+      });
+      localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
+      initList();
+    }
+  });
 };
 export default checkBox;

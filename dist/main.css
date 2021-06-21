@@ -62,9 +62,8 @@ p{word-wrap:break-word}
   color: #fff;
 }
 .con-box {
-  padding-top: 20px;
   display: none;
-  /* background: #eee; */
+  /* background: #666; */
 }
 .con-tasks-newBg {
   width: 100px;
@@ -83,9 +82,12 @@ p{word-wrap:break-word}
 .con-tasks {
   position: relative;
   width: 100%;
-  height: 250px;
-  padding: 20px 0;
-  /* background: pink; */
+  height: 270px;
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  /* background: red; */
 }
 .con-tasks-tip {
   font-size: 18px;
@@ -93,14 +95,14 @@ p{word-wrap:break-word}
 }
 .con-tasks-choose {
   position: absolute;
-  right: 0px;
+  right: 20px;
   top: 18px;
 }
 
 /* 今日待办 */
 .con-tasks-ul {
   position: absolute;
-  top: 60px;
+  top: 44px;
   bottom: 0px;
   left: 0;
   right: 0;
@@ -113,13 +115,12 @@ p{word-wrap:break-word}
   font-size: 16px;
   font-weight: bold;
   color: #666;
+  margin: 0 20px;
   text-decoration: none;
   text-align: left;
   border-bottom: 1px solid #666;
-  /* background: #eee; */
 }
-#btnTodoOperate + label,
-#btnDoneOperate + label {
+.taskLabel {
   display: inline-block;
   width: 20px;
   height: 20px;
@@ -142,7 +143,7 @@ p{word-wrap:break-word}
   content: "\2714";
   text-align: center;
   font-size: 16px;
-  color: #ff8400;
+  color: #eee;
 }
 .con-task-li label {
   display: inline-block;
@@ -175,8 +176,15 @@ p{word-wrap:break-word}
   border: none;
   outline: 0;
   color: #666;
-  background: #fff;
+  background: transparent;
   cursor: pointer;
+}
+.nullList {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: #666;
+  font-size: 30px;
 }
 
 /* 弹窗 */
@@ -192,7 +200,7 @@ p{word-wrap:break-word}
 .diolog-con {
   position: relative;
   width: 400px;
-  height: 300px;
+  height: 250px;
   margin: 0 auto;
   padding: 20px;
   top: 50%;
@@ -201,6 +209,7 @@ p{word-wrap:break-word}
 }
 .diolog-tip {
   font-size: 20px;
+  color: #ff8400;
   font-weight: 700;
 }
 .diolog-input {
@@ -220,8 +229,12 @@ p{word-wrap:break-word}
   width: 250px;
   height: 30px;
   margin-top: 13px;
+  outline: none;
 }
 .diolog-input-btn {
   text-align: right;
+}
+.diolog-input-btn button {
+  margin-right: 10px;
 }
 

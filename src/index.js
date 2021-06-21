@@ -5,15 +5,16 @@ import "./css/index.css";
 // json数据模拟
 import { tasks } from "../mock/export";
 // 初始化页面自定义函数自调用
-import init from "./js/init";
+import { initData, initList } from "./js/init";
 // 导航栏切换
 import navSwitch from "./js/util/navSwitch";
 import checkBox from "./js/util/checkBox";
 // 弹窗
-import model from "./js/util/model";
+import dialogModel from "./js/util/dialogModel";
 
 // 初始化页面
-init(tasks);
+initData(tasks);
+initList();
 // 导航栏
 navSwitch();
 checkBox();
@@ -22,7 +23,7 @@ checkBox();
 document
   .getElementsByClassName("tasksNewDialog")[0]
   .addEventListener("click", () => {
-    model("tasksNewDialog");
+    dialogModel("tasksNewDialog");
   });
 
 // 点击弹窗以外部分 关闭弹窗
