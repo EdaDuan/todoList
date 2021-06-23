@@ -5,33 +5,16 @@ import "./css/index.css";
 // json数据模拟
 import { tasks } from "../mock/export";
 // 初始化页面自定义函数自调用
-import { initData, initList } from "./js/init";
+import { initList } from "./js/init";
 // 导航栏切换
 import navSwitch from "./js/util/navSwitch";
-import checkBox from "./js/util/checkBox";
-// 弹窗
-import dialogModel from "./js/util/dialogModel";
-
+import { operation } from "./js/util/operation";
 // 初始化页面
-initData(tasks);
+localStorage.setItem("listItem", JSON.stringify(tasks)); //将JS对象转化成JSON对象并保存到本地
 initList();
 // 导航栏
 navSwitch();
-checkBox();
-
-// 新建todoList
-document
-  .getElementsByClassName("tasksNewDialog")[0]
-  .addEventListener("click", () => {
-    dialogModel("tasksNewDialog");
-  });
-
-// 点击弹窗以外部分 关闭弹窗
-let diologBox = document.getElementsByClassName("diolog-box")[0];
-diologBox.addEventListener("click", () => {
-  diologBox.style.display = "none";
-});
-
+operation();
 // 阻止弹窗的冒泡事件
 document
   .getElementsByClassName("diolog-con")[0]

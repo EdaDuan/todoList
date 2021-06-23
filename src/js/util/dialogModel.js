@@ -1,5 +1,5 @@
 import { initList } from "../init";
-const dialogModel = (msg) => {
+const dialogModel = (msg, taskN = "") => {
   const inputArr = [];
   var newtodo = {
     taskId: 17,
@@ -8,18 +8,26 @@ const dialogModel = (msg) => {
     status: true,
   };
   let diologBox = document.getElementsByClassName("diolog-box")[0];
-  diologBox.style.display = "block";
+
   let diologTip = document.getElementsByClassName("diolog-tip")[0];
   let diologSure = document.querySelector(".diolog-sure");
   let diologCancer = document.querySelector(".diolog-cancer");
-  console.log("diologSure: ", diologSure);
+  let diologInputName = document.querySelector("#diolog-input-name");
+  console.log("diologInputName: ", diologInputName);
+  diologInputName.value = taskN;
   switch (msg) {
     case "tasksNewDialog":
       diologTip.innerText = "新建任务项";
+      diologBox.style.display = "block";
+      break;
+    case "editorDialog":
+      diologTip.innerText = "编辑任务项";
+      diologBox.style.display = "block";
       break;
     default:
       console.log("🚀 ~ file: model.js ~ line 2 ~ model ~ msg", msg);
   }
+  // 确认
   diologSure.addEventListener("click", (e) => {
     console.log("e: ", e);
     let temp = document.getElementById("diolog-input-name").value; //使用temp存储id为todo标签的value值
@@ -43,7 +51,12 @@ const dialogModel = (msg) => {
       return;
     }
   });
+  // 取消
   diologCancer.addEventListener("click", (e) => {
+    diologBox.style.display = "none";
+  });
+  // 弹窗以外部分
+  diologBox.addEventListener("click", () => {
     diologBox.style.display = "none";
   });
 };
