@@ -58,7 +58,13 @@ const createTodo = (item) => {
   return { dom: li, checkbox };
 };
 // 根据待办项状态添加checkbox的name属性
-const addCheckName = (item, dom, checkbox, fragmentTodo, fragmentDone) => {
+const addCheckName = (
+  item,
+  dom,
+  checkbox,
+  fragmentTodo,
+  fragmentDone = fragmentTodo
+) => {
   item.status
     ? (checkbox.setAttribute("name", "todoList"), fragmentTodo.appendChild(dom))
     : ((checkbox.checked = true),
@@ -109,4 +115,4 @@ const initList = () => {
     : (listNotEmpty(btnDoneOperate, taskLabel[1]),
       doneUlItem.appendChild(fragmentDone));
 };
-export { initList, listEmpty, listNotEmpty };
+export { initList, createTodo, addCheckName, listEmpty, listNotEmpty };

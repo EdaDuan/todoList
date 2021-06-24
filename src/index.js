@@ -8,13 +8,13 @@ import { tasks } from "../mock/export";
 import { initList } from "./js/init";
 // 导航栏切换
 import navSwitch from "./js/util/navSwitch";
-import { operation } from "./js/util/operation";
+import { newList } from "./js/util/operation";
 // 初始化页面
 localStorage.setItem("listItem", JSON.stringify(tasks)); //将JS对象转化成JSON对象并保存到本地
 initList();
 // 导航栏
 navSwitch();
-operation();
+newList();
 // 阻止弹窗的冒泡事件
 document
   .getElementsByClassName("diolog-con")[0]
