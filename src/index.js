@@ -4,17 +4,19 @@ import "./css/global.css";
 import "./css/index.css";
 // json数据模拟
 import { tasks } from "../mock/export";
-// 初始化页面自定义函数自调用
-import { initList } from "./js/init";
 // 导航栏切换
 import navSwitch from "./js/util/navSwitch";
-import { newList } from "./js/util/operation";
+import { newTodoList } from "./js/util/operation";
 // 初始化页面
-localStorage.setItem("listItem", JSON.stringify(tasks)); //将JS对象转化成JSON对象并保存到本地
+import { initList, initNotDoneList, initAllList } from "./js/init";
+let listData = JSON.parse(localStorage.getItem("listItem")); //获取本地的数据
+localStorage.setItem("listItem", JSON.stringify(listData || tasks)); //将JS对象转化成JSON对象并保存到本地
 initList();
+initNotDoneList();
+initAllList();
 // 导航栏
 navSwitch();
-newList();
+newTodoList();
 // 阻止弹窗的冒泡事件
 document
   .getElementsByClassName("diolog-con")[0]

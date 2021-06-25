@@ -1,10 +1,12 @@
+import { listEmpty, listNotEmpty } from "./util/common";
 import emptyBox from "./util/emptyBox";
+import formatData from "./util/formate";
 import {
-  delBtnData,
-  editBtnData,
-  changList,
-  todoOperate,
-  DoneOperate,
+  changeList,
+  delList,
+  editList,
+  selectAllTodoList,
+  selectAllDoneList,
 } from "./util/operation";
 let todoListStorage = [];
 // 创建checkbox
@@ -51,10 +53,10 @@ const createTodo = (item) => {
   li.className = "con-task-li";
   li.setAttribute("id", item.taskId);
   let checkbox = createCheckbox(li, item);
-  createLabel(li, item, changList);
+  createLabel(li, item, changeList);
   createSpan(li, item);
-  createDelBtn(li, delBtnData, "con-task-delBtn");
-  createEidtBtn(li, editBtnData, "con-task-editorBtn");
+  createDelBtn(li, delList, "con-task-delBtn");
+  createEidtBtn(li, editList, "con-task-editBtn");
   return { dom: li, checkbox };
 };
 // 根据待办项状态添加checkbox的name属性
@@ -71,48 +73,81 @@ const addCheckName = (
       checkbox.setAttribute("name", "doneList"),
       fragmentDone.appendChild(dom));
 };
-// 当list为空时全选框的样式和内容提示为空
-const listEmpty = (btnOperate, taskLabel) => {
-  btnOperate.setAttribute("disabled", "false");
-  btnOperate.checked = true;
-  taskLabel.style.border = "1px solid #eee";
-};
-const listNotEmpty = (btnOperate, taskLabel) => {
-  btnOperate.removeAttribute("disabled");
-  btnOperate.checked = false;
-  taskLabel.style.border = "1px solid #666";
-};
+
 const initList = () => {
-  let btnTodoOperate = document.getElementById("btnTodoOperate");
-  let btnDoneOperate = document.getElementById("btnDoneOperate");
+  let selectAllTodo = document.getElementById("selectAllTodo");
+  let selectAllDone = document.getElementById("selectAllDone");
   let taskLabel = document.getElementsByClassName("taskLabel");
   let listItem = localStorage.getItem("listItem"); //获取本地的数据
   if (listItem != null) {
     //不为空时
     todoListStorage = JSON.parse(listItem); //JSON对象转换为JS对象
   }
-  let todoUlItem = document.getElementsByClassName("con-todo-ul")[0];
-  todoUlItem.innerHTML = "";
-  let doneUlItem = document.getElementsByClassName("con-done-ul")[0];
-  doneUlItem.innerHTML = "";
+  let conTodoUl = document.querySelector(".con-todo-ul");
+  let conDoneUl = document.querySelector(".con-done-ul");
+  conTodoUl.innerHTML = "";
+  conDoneUl.innerHTML = "";
   // 创建文档
   let fragmentTodo = document.createDocumentFragment();
   let fragmentDone = document.createDocumentFragment();
-  btnTodoOperate.addEventListener("click", todoOperate, false);
-  btnDoneOperate.addEventListener("click", DoneOperate, false);
-  todoListStorage.forEach((item) => {
+  selectAllTodo.addEventListener("click", selectAllTodoList, false);
+  selectAllDone.addEventListener("click", selectAllDoneList, false);
+  const filterTodoList = todoListStorage.filter(
+    (item) => item.finishTime == formatData(new Date())
+  );
+  filterTodoList.forEach((item) => {
     const { dom, checkbox } = createTodo(item);
     addCheckName(item, dom, checkbox, fragmentTodo, fragmentDone);
   });
   fragmentTodo.childNodes.length === 0
-    ? (listEmpty(btnTodoOperate, taskLabel[0]),
-      todoUlItem.appendChild(emptyBox("今日任务为空，快去创建吧～")))
-    : (listNotEmpty(btnTodoOperate, taskLabel[0]),
-      todoUlItem.appendChild(fragmentTodo));
+    ? (listEmpty(selectAllTodo, taskLabel[0]),
+      conTodoUl.appendChild(emptyBox("今日任务为空，快去创建吧～")))
+    : (listNotEmpty(selectAllTodo, taskLabel[0]),
+      conTodoUl.appendChild(fragmentTodo));
+
   fragmentDone.childNodes.length === 0
-    ? (listEmpty(btnDoneOperate, taskLabel[1]),
-      doneUlItem.appendChild(emptyBox("今日还没有完成任务～")))
-    : (listNotEmpty(btnDoneOperate, taskLabel[1]),
-      doneUlItem.appendChild(fragmentDone));
+    ? (listEmpty(selectAllDone, taskLabel[1]),
+      conDoneUl.appendChild(emptyBox("今日还没有完成任务～")))
+    : (listNotEmpty(selectAllDone, taskLabel[1]),
+      conDoneUl.appendChild(fragmentDone));
 };
-export { initList, createTodo, addCheckName, listEmpty, listNotEmpty };
+const initNotDoneList = () => {
+  let listItem = localStorage.getItem("listItem"); //获取本地的数据
+  let allNotDoneStorage = [];
+  if (listItem != null) {
+    //不为空时
+    allNotDoneStorage = JSON.parse(listItem); //JSON对象转换为JS对象
+  }
+  let allNotDoneUl = document.querySelector(".allNotDone-ul");
+  allNotDoneUl.innerHTML = "";
+  let fragmentNotDone = document.createDocumentFragment();
+  const filterNotDoneList = allNotDoneStorage.filter(
+    (item) => item.status == true
+  );
+  filterNotDoneList.forEach((item) => {
+    const { dom, checkbox } = createTodo(item);
+    addCheckName(item, dom, checkbox, fragmentNotDone);
+  });
+  fragmentNotDone.childNodes.length === 0
+    ? allNotDoneUl.appendChild(emptyBox("所有待办项都已完成～"))
+    : allNotDoneUl.appendChild(fragmentNotDone);
+};
+const initAllList = () => {
+  let listItem = localStorage.getItem("listItem"); //获取本地的数据
+  let allTaskStorage = [];
+  if (listItem != null) {
+    //不为空时
+    allTaskStorage = JSON.parse(listItem); //JSON对象转换为JS对象
+  }
+  let allListUl = document.querySelector(".allList-ul");
+  allListUl.innerHTML = "";
+  let fragmentAllTask = document.createDocumentFragment();
+  allTaskStorage.forEach((item) => {
+    const { dom, checkbox } = createTodo(item);
+    addCheckName(item, dom, checkbox, fragmentAllTask);
+  });
+  fragmentAllTask.childNodes.length === 0
+    ? allListUl.appendChild(emptyBox("还没有待办项，快去创建吧～"))
+    : allListUl.appendChild(fragmentAllTask);
+};
+export { initList, initNotDoneList, initAllList, createTodo, addCheckName };

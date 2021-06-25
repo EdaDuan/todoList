@@ -1,4 +1,5 @@
 import { createTodo, addCheckName } from "../init";
+import { removeEmptyBox } from "./common";
 import formatData from "../util/formate";
 let diologBox = document.querySelector(".diolog-box");
 let diologTip = document.querySelector(".diolog-tip");
@@ -9,27 +10,41 @@ let diologInputTime = document.querySelector("#diolog-input-time");
 
 let todoUlItem = document.querySelector(".con-todo-ul");
 let creatTime = "";
-// 新建的初始化
+// 新建待办项弹窗的初始化
 const newInit = () => {
   let date = new Date(); //当前时间
   let finishTime = formatData(date);
   diologInputName.value = "";
   diologInputTime.value = finishTime;
 };
-// 失去焦点时获取当前时间
+// 待办项输入框失去焦点时获取当前时间
 diologInputName.onblur = function () {
   let date = new Date();
   creatTime = formatData(date);
 };
-// 新建的确认
+// 新建待办项的UI
+const changeNewStatus = (newtodo) => {
+  const { dom, checkbox } = createTodo(newtodo);
+  console.log("todoUlItem: ", todoUlItem);
+  removeEmptyBox(todoUlItem);
+  addCheckName(newtodo, dom, checkbox, todoUlItem);
+};
+// 新建待办项的data
+const changeNewData = (newtodo, data) => {
+  data.push(newtodo); //往todolist中添加对象
+  localStorage.setItem("listItem", JSON.stringify(data)); //将JS对象转化成JSON对象并保存到本地
+};
+// 新建待办项的确认事件
 const newSure = () => {
+  let listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
   let newtodo = {
-    taskId: 17,
+    taskId: listItem.length,
     taskName: "", //输入的内容
     createTime: "",
     status: true,
   };
   let nameValue = diologInputName.value; //使用nameValue存储
+  let finishTime = diologInputTime.value;
   if (nameValue.length == 0 && nameValue.trim() == "") {
     //当输入为空时
     alert("输入事项不能为空");
@@ -37,15 +52,11 @@ const newSure = () => {
   }
   var flag = confirm("您确定要添加该事项吗?"); //弹出确认框
   if (flag) {
-    newtodo.taskName = nameValue; //值赋给newtodo对象的taskName属性
+    newtodo.taskName = nameValue;
     newtodo.createTime = creatTime;
-    newtodo.finishTime = diologInputTime.value;
-    let listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
-    listItem.push(newtodo); //往todolist中添加对象
-    const { dom, checkbox } = createTodo(newtodo);
-    addCheckName(newtodo, dom, checkbox, todoUlItem);
-    localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
-    diologInputName.value = ""; //对输入框进行初始化
+    newtodo.finishTime = finishTime;
+    changeNewStatus(newtodo);
+    changeNewData(newtodo, listItem, nameValue, finishTime);
     alert("添加成功");
     diologBox.style.display = "none";
   } else {
@@ -58,12 +69,27 @@ const editInit = (list) => {
   diologInputName.value = list.taskName;
   diologInputTime.value = list.finishTime;
 };
-// 编辑确认
-const editSure = (item, list) => {
-  console.log("list: ", list);
-  console.log("item: ", item.target.parentNode.childNodes);
+// 编辑 修改UI
+const changeEditStatus = (element, nameValue) => {
+  element.target.parentNode.childNodes.forEach((item) => {
+    if (item.tagName === "SPAN") {
+      item.innerText = nameValue;
+    }
+  });
+};
+// 编辑 修改数据
+const changeEditData = (data, list, nameValue, finishTime) => {
+  data.forEach((item) => {
+    if (item.taskId === list.taskId) {
+      item.taskName = nameValue;
+      item.finishTime = finishTime;
+    }
+  });
+};
+// 编辑确认事件判断
+const editSure = (element, list) => {
   let nameValue = diologInputName.value;
-
+  let finishTime = diologInputTime.value;
   if (nameValue.length == 0 && nameValue.trim() == "") {
     //当输入为空时
     alert("输入事项不能为空");
@@ -71,14 +97,11 @@ const editSure = (item, list) => {
   }
   var flag = confirm("您确定要修改该事项吗?");
   if (flag) {
-    item.target.parentNode.childNodes.forEach((item) => {
-      if (item.tagName === "SPAN") {
-        item.innerText = nameValue;
-      }
-    });
     let listItem = JSON.parse(localStorage.getItem("listItem"));
-    list.taskName = nameValue;
+    changeEditStatus(element, nameValue);
+    changeEditData(listItem, list, nameValue, finishTime);
     localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
+    console.log("listItem: ", listItem);
     alert("编辑成功");
     diologBox.style.display = "none";
   } else {
@@ -86,28 +109,39 @@ const editSure = (item, list) => {
     return;
   }
 };
-
-const dialogModel = (msg, item = "", list = "") => {
+// 函数移除
+function handelNewSure() {
+  newSure();
+  diologSure.removeEventListener("click", handelNewSure, false);
+}
+function handelEditSure() {
+  const params = diologSure._params;
+  editSure(params.element, params.list);
+  diologSure.removeEventListener("click", handelEditSure, false);
+}
+// 判断弹窗
+const changeModel = (msg, element, list) => {
   switch (msg) {
     case "tasksNewDialog":
       diologTip.innerText = "新建任务项";
       diologBox.style.display = "block";
       newInit();
-      diologSure.addEventListener("click", function () {
-        newSure();
-      });
+      diologSure.addEventListener("click", handelNewSure, false);
       break;
     case "editorDialog":
       diologTip.innerText = "编辑任务项";
       diologBox.style.display = "block";
       editInit(list);
-      diologSure.addEventListener("click", function () {
-        editSure(item, list);
-      });
+      diologSure._params = { element, list };
+      diologSure.addEventListener("click", handelEditSure, false);
       break;
     default:
-      console.log("🚀 ~ file: model.js ~ line 2 ~ model ~ msg", msg);
+      console.log("弹窗出错了！");
   }
+};
+
+const dialogModel = (msg, element = "", list = "") => {
+  changeModel(msg, element, list);
   // 取消
   diologCancer.addEventListener("click", (e) => {
     diologBox.style.display = "none";
