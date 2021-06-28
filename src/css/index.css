@@ -195,6 +195,24 @@
   line-height: 60px;
 }
 
+/* 未完成 */
+.notDoneBox,
+.allListBox {
+  width: 100%;
+  min-height: 100px;
+  margin-top: 20px;
+  /* background: red; */
+}
+.notDoneData,
+.allListData {
+  color: #ff8400;
+  font-size: 24px;
+}
+.notoDoneUl,
+.allListUl {
+  margin-top: 15px;
+}
+
 /* 弹窗 */
 .diolog-box {
   position: fixed;

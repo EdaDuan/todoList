@@ -8,12 +8,10 @@ import { tasks } from "../mock/export";
 import navSwitch from "./js/util/navSwitch";
 import { newTodoList } from "./js/util/operation";
 // 初始化页面
-import { initList, initNotDoneList, initAllList } from "./js/init";
+import { initList } from "./js/init";
 let listData = JSON.parse(localStorage.getItem("listItem")); //获取本地的数据
 localStorage.setItem("listItem", JSON.stringify(listData || tasks)); //将JS对象转化成JSON对象并保存到本地
-initList();
-initNotDoneList();
-initAllList();
+initList(listData || tasks);
 // 导航栏
 navSwitch();
 newTodoList();

@@ -24,7 +24,8 @@ diologInputName.onblur = function () {
 };
 // 新建待办项的UI
 const changeNewStatus = (newtodo) => {
-  const { dom, checkbox } = createTodo(newtodo);
+  // const { dom, checkbox } = createTodo(newtodo);
+  const { dom, checkbox } = createTodo(newtodo, "TODO");
   console.log("todoUlItem: ", todoUlItem);
   removeEmptyBox(todoUlItem);
   addCheckName(newtodo, dom, checkbox, todoUlItem);

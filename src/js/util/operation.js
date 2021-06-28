@@ -99,6 +99,7 @@ const changeData = (e, data) => {
 };
 const changeList = (e) => {
   listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
+  console.log("listItem: ", listItem);
   isListUl(e)
     ? // todo
       changeStatus(
@@ -152,9 +153,45 @@ const editList = (e) => {
   dialogModel("editorDialog", e, getEditData(e, listItem));
 };
 
+// 未完成的勾选事件
+// 改变状态函数
+const notDoneChanStatus = (e) => {
+  // 修改checkbox的name属性值
+  e.target.parentNode.firstChild.name = "doneList";
+  // 当当前日期盒子只有一条数据时 移除当前盒子 否则 移除当前待办项
+  e.target.parentNode.parentNode.childNodes.length === 1
+    ? e.target.parentNode.parentNode.parentNode.remove()
+    : e.target.parentNode.remove();
+};
+const notDoneChangList = (e) => {
+  listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
+  // 改变状态
+  notDoneChanStatus(e);
+  // 改变数据
+  changeData(e, listItem);
+};
+
+// 已完成的勾选事件
+const allListChanStatus = (e) => {
+  // 修改checkbox的name属性值
+  e.target.parentNode.firstChild.name = "todoList";
+  // 当前日期盒子只有一条数据时 移除当前盒子 否则 移除当前待办项
+  e.target.parentNode.parentNode.childNodes.length === 1
+    ? e.target.parentNode.parentNode.parentNode.remove()
+    : e.target.parentNode.remove();
+};
+const allListChangList = (e) => {
+  listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
+  // 改变状态
+  allListChanStatus(e);
+  // 改变数据
+  changeData(e, listItem);
+};
 export {
   newTodoList,
   changeList,
+  notDoneChangList,
+  allListChangList,
   delList,
   editList,
   selectAllTodoList,
