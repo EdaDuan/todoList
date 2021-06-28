@@ -32,6 +32,21 @@ const changeAllStatus = (ul, domList) => {
     // ul.appendChild(domList[i]))
   }
 };
+const changeAllStatus2 = (ul, domList) => {
+  console.log("domList: ", domList);
+  console.log("domList.firstChild.checked: ", domList.firstChild.checked);
+  removeEmptyBox(ul);
+  // for (let i = 0; i < domList.length; i++) {
+  domList.firstChild.checked
+    ? ((domList.firstChild.checked = false),
+      (domList.firstChild.name = "todoList"))
+    : ((domList.firstChild.checked = true),
+      (domList.firstChild.name = "doneList"));
+  ul.appendChild(domList);
+  // console.log("domList[i]11: ", domList[i]),
+  // ul.appendChild(domList[i]))
+  // }
+};
 const changeAllData = (list, data, status) => {
   if (list.length !== 0) {
     for (let i = 0; i < data.length; i++) {
@@ -43,17 +58,26 @@ const changeAllData = (list, data, status) => {
 };
 const selectAllTodoList = () => {
   changeAllData(todoList, listItem, false);
-  changeAllStatus(conDoneUl, conTodoUl.childNodes);
   conTodoUl.innerHTML = "";
+  // for (let i = 0; i < conTodoUl.childNodes.length; i++) {
+  //   changeAllStatus2(conDoneUl, conTodoUl.childNodes[i]);
+  // }
+  changeAllStatus(conDoneUl, conTodoUl.childNodes);
+
   listEmpty(selectAllTodo, taskLabel[0]);
   listNotEmpty(selectAllDone, taskLabel[1]);
   conTodoUl.appendChild(emptyBox("今日任务为空，快去创建吧～"));
   localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
 };
 const selectAllDoneList = () => {
+  console.log("conDoneUl.childNodes.length: ", conDoneUl.childNodes.length);
   changeAllData(doneList, listItem, true);
-  changeAllStatus(conTodoUl, conDoneUl.childNodes);
   conDoneUl.innerHTML = "";
+  // for (let i = 0; i < conDoneUl.childNodes.length; i++) {
+  //   changeAllStatus2(conTodoUl, conDoneUl.childNodes[i]);
+  // }
+  changeAllStatus(conTodoUl, conDoneUl.childNodes);
+
   listEmpty(selectAllDone, taskLabel[1]);
   listNotEmpty(selectAllTodo, taskLabel[0]);
   conDoneUl.appendChild(emptyBox("今日还没有完成任务～"));

@@ -39,7 +39,7 @@ const changeNewData = (newtodo, data) => {
 const newSure = () => {
   let listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
   let newtodo = {
-    taskId: listItem.length,
+    taskId: listItem[listItem.length - 1].taskId + 1,
     taskName: "", //输入的内容
     createTime: "",
     status: true,
@@ -61,7 +61,7 @@ const newSure = () => {
     alert("添加成功");
     diologBox.style.display = "none";
   } else {
-    alert("操作出错");
+    alert("操作取消");
     return;
   }
 };

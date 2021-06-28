@@ -104,12 +104,13 @@
   line-height: 40px;
   font-size: 16px;
   font-weight: bold;
-  color: #666;
+
   margin: 0 20px;
   text-decoration: none;
   text-align: left;
   border-bottom: 1px solid #666;
 }
+
 .taskLabel {
   display: inline-block;
   width: 20px;
@@ -152,7 +153,8 @@
   font-size: 16px;
   top: -10px;
   left: 4px;
-  color: #ff8400;
+  /* color: #ff8400; */
+  color: #999;
 }
 .con-task-li span {
   padding-left: 40px;
@@ -187,6 +189,19 @@
   border: 1px solid #eee;
   border-radius: 8px;
   /* background: red; */
+}
+
+.con-todo-ul,
+.allNotDone {
+  color: #666;
+}
+.con-done-ul,
+.allList {
+  color: #999;
+}
+.con-done-ul span,
+.allListUl span {
+  text-decoration: line-through solid #999 2px;
 }
 .con-tasks-bg {
   width: 100px;
