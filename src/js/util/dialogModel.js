@@ -1,12 +1,12 @@
 import { createTodo, addCheckName } from "../init";
-import { removeEmptyBox } from "./common";
+import { removeEmptyBox, inputValue } from "./common";
 import formatData from "../util/formate";
-let diologBox = document.querySelector(".diolog-box");
-let diologTip = document.querySelector(".diolog-tip");
-let diologSure = document.querySelector(".diolog-sure");
-let diologCancer = document.querySelector(".diolog-cancer");
-let diologInputName = document.querySelector("#diolog-input-name");
-let diologInputTime = document.querySelector("#diolog-input-time");
+let dialogBox = document.querySelector(".dialog-box");
+let dialogTip = document.querySelector(".dialog-tip");
+let dialogSure = document.querySelector(".dialog-sure");
+let dialogCancel = document.querySelector(".dialog-cancel");
+let dialogInputName = document.querySelector("#dialog-input-name");
+let dialogInputTime = document.querySelector("#dialog-input-time");
 
 let todoUlItem = document.querySelector(".con-todo-ul");
 let creatTime = "";
@@ -14,19 +14,17 @@ let creatTime = "";
 const newInit = () => {
   let date = new Date(); //当前时间
   let finishTime = formatData(date);
-  diologInputName.value = "";
-  diologInputTime.value = finishTime;
+  dialogInputName.value = "";
+  dialogInputTime.value = finishTime;
 };
-// 待办项输入框失去焦点时获取当前时间
-diologInputName.onblur = function () {
+// // 待办项输入框失去焦点时获取当前时间
+dialogInputName.onblur = function () {
   let date = new Date();
   creatTime = formatData(date);
 };
 // 新建待办项的UI
 const changeNewStatus = (newtodo) => {
-  // const { dom, checkbox } = createTodo(newtodo);
   const { dom, checkbox } = createTodo(newtodo, "TODO");
-  console.log("todoUlItem: ", todoUlItem);
   removeEmptyBox(todoUlItem);
   addCheckName(newtodo, dom, checkbox, todoUlItem);
 };
@@ -44,31 +42,30 @@ const newSure = () => {
     createTime: "",
     status: true,
   };
-  let nameValue = diologInputName.value; //使用nameValue存储
-  let finishTime = diologInputTime.value;
-  if (nameValue.length == 0 && nameValue.trim() == "") {
-    //当输入为空时
-    alert("输入事项不能为空");
+  let nameValue = dialogInputName.value; //使用nameValue存储
+  let finishTime = dialogInputTime.value;
+  if (inputValue(nameValue) || inputValue(finishTime)) {
     return;
-  }
-  var flag = confirm("您确定要添加该事项吗?"); //弹出确认框
-  if (flag) {
-    newtodo.taskName = nameValue;
-    newtodo.createTime = creatTime;
-    newtodo.finishTime = finishTime;
-    changeNewStatus(newtodo);
-    changeNewData(newtodo, listItem, nameValue, finishTime);
-    alert("添加成功");
-    diologBox.style.display = "none";
   } else {
-    alert("操作取消");
-    return;
+    var flag = confirm("您确定要添加该事项吗?"); //弹出确认框
+    if (flag) {
+      newtodo.taskName = nameValue;
+      newtodo.createTime = creatTime;
+      newtodo.finishTime = finishTime;
+      changeNewStatus(newtodo);
+      changeNewData(newtodo, listItem, nameValue, finishTime);
+      alert("添加成功");
+    } else {
+      alert("操作取消");
+    }
+    dialogBox.style.display = "none";
   }
+  unclick();
 };
 // 编辑初始化
 const editInit = (list) => {
-  diologInputName.value = list.taskName;
-  diologInputTime.value = list.finishTime;
+  dialogInputName.value = list.taskName;
+  dialogInputTime.value = list.finishTime;
 };
 // 编辑 修改UI
 const changeEditStatus = (element, nameValue) => {
@@ -89,8 +86,8 @@ const changeEditData = (data, list, nameValue, finishTime) => {
 };
 // 编辑确认事件判断
 const editSure = (element, list) => {
-  let nameValue = diologInputName.value;
-  let finishTime = diologInputTime.value;
+  let nameValue = dialogInputName.value;
+  let finishTime = dialogInputTime.value;
   if (nameValue.length == 0 && nameValue.trim() == "") {
     //当输入为空时
     alert("输入事项不能为空");
@@ -104,37 +101,52 @@ const editSure = (element, list) => {
     localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
     console.log("listItem: ", listItem);
     alert("编辑成功");
-    diologBox.style.display = "none";
+    dialogBox.style.display = "none";
   } else {
-    alert("操作出错");
+    alert("操作取消");
+    dialogBox.style.display = "none";
     return;
   }
 };
-// 函数移除
+function handelFun() {
+  if (dialogSure._status === "new") {
+    console.log("新建");
+    handelNewSure();
+  } else {
+    console.log("编辑");
+    handelEditSure();
+  }
+}
 function handelNewSure() {
   newSure();
-  diologSure.removeEventListener("click", handelNewSure, false);
 }
 function handelEditSure() {
-  const params = diologSure._params;
+  const params = dialogSure._params;
   editSure(params.element, params.list);
-  diologSure.removeEventListener("click", handelEditSure, false);
+  unclick();
 }
+// 函数移除
+const unclick = () => {
+  console.log("调用了移除函数");
+  dialogSure.removeEventListener("click", handelFun, false);
+};
 // 判断弹窗
 const changeModel = (msg, element, list) => {
   switch (msg) {
     case "tasksNewDialog":
-      diologTip.innerText = "新建任务项";
-      diologBox.style.display = "block";
+      dialogTip.innerText = "新建任务项";
+      dialogBox.style.display = "block";
       newInit();
-      diologSure.addEventListener("click", handelNewSure, false);
+      dialogSure._status = "new";
+      dialogSure.addEventListener("click", handelFun, false);
       break;
     case "editorDialog":
-      diologTip.innerText = "编辑任务项";
-      diologBox.style.display = "block";
+      dialogTip.innerText = "编辑任务项";
+      dialogBox.style.display = "block";
       editInit(list);
-      diologSure._params = { element, list };
-      diologSure.addEventListener("click", handelEditSure, false);
+      dialogSure._params = { element, list };
+      dialogSure._status = "edit";
+      dialogSure.addEventListener("click", handelFun, false);
       break;
     default:
       console.log("弹窗出错了！");
@@ -144,12 +156,13 @@ const changeModel = (msg, element, list) => {
 const dialogModel = (msg, element = "", list = "") => {
   changeModel(msg, element, list);
   // 取消
-  diologCancer.addEventListener("click", (e) => {
-    diologBox.style.display = "none";
+  dialogCancel.addEventListener("click", (e) => {
+    unclick();
+    dialogBox.style.display = "none";
   });
   // 弹窗以外部分
-  diologBox.addEventListener("click", () => {
-    diologBox.style.display = "none";
+  dialogBox.addEventListener("click", () => {
+    dialogBox.style.display = "none";
   });
 };
 export default dialogModel;

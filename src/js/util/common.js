@@ -21,8 +21,6 @@ const listNotEmpty = (btnOperate, taskLabel) => {
   btnOperate.checked = false;
   taskLabel.style.border = "1px solid #666";
 };
-// 首次渲染为空和今日待办项的勾选事件后为空
-const todoIsempty = () => {};
 // 排序
 const objKeySort = (obj) => {
   //排序的函数
@@ -52,6 +50,15 @@ const classifyTime = (data) => {
   }
   return listClassifyArr;
 };
+// 弹窗值为空的判断
+const inputValue = (data) => {
+  if (data.length == 0 && data.trim() == "") {
+    //当输入为空时
+    alert("输入事项或时间不能为空");
+    return true;
+  }
+  return false;
+};
 export {
   removeEmptyBox,
   isListUl,
@@ -59,4 +66,5 @@ export {
   listNotEmpty,
   objKeySort,
   classifyTime,
+  inputValue,
 };

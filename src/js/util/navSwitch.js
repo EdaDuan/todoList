@@ -1,11 +1,11 @@
 import { initList } from "../init";
 import notDoneList from "../components/notDoneList";
-import allTodoList from "../components/allTodoList";
+import doneList from "../components/doneList";
 const navSwitch = () => {
   let liItem = document.getElementsByClassName("nav-li");
   let boxItem = document.getElementsByClassName("con-box");
   let aItem = document.getElementsByClassName("nav-a");
-  let listArr = [initList, notDoneList, allTodoList];
+  let listArr = [initList, notDoneList, doneList];
   boxItem[0].style.display = "block";
   aItem[0].style.color = "#ff8400";
   liItem[0].classList.add("navLiMouseOver");

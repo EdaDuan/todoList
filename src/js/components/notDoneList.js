@@ -1,4 +1,5 @@
 import { createTodo, addCheckName } from "../init";
+import { objKeySort, classifyTime } from "../util/common";
 import emptyBox from "../util/emptyBox";
 // 创建div
 const createDiv = (dom) => {
@@ -21,34 +22,7 @@ const createUl = (dom) => {
   dom.appendChild(ul);
   return ul;
 };
-// 排序
-const objKeySort = (obj) => {
-  //排序的函数
-  var newkey = Object.keys(obj).sort(function (a, b) {
-    return Date.parse(b) - Date.parse(a);
-  });
-  var newObj = {}; //创建一个新的对象，用于存放排好序的键值对
-  for (var i = 0; i < newkey.length; i++) {
-    //遍历newkey数组
-    newObj[newkey[i]] = obj[newkey[i]]; //向新创建的对象中按照排好的顺序依次增加键值对
-  }
-  return newObj; //返回排好序的新对象
-};
-// 分类
-const classifyTime = (data) => {
-  let listClassifyArr = {};
-  for (let i = 0; i < data.length; i++) {
-    // 当次循环出的变量
-    let temp = data[i];
-    // 保存分类条件
-    let key = temp.finishTime;
-    if (!listClassifyArr[key]) {
-      listClassifyArr[key] = [];
-    }
-    listClassifyArr[key].push(temp);
-  }
-  return listClassifyArr;
-};
+
 // 创建分类的DOM
 const createDom = (obj, ul) => {
   obj.forEach((item) => {

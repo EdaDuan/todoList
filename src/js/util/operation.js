@@ -1,83 +1,123 @@
-import { removeEmptyBox, isListUl, listEmpty, listNotEmpty } from "./common";
+import {
+  removeEmptyBox,
+  isListUl,
+  listEmpty,
+  listNotEmpty,
+  inputValue,
+} from "./common";
+import { createTodo, addCheckName } from "../init";
 // 弹窗
-import dialogModel from "../util/dialogModel";
+import { initDialog, popupDialog, closeDialog } from "./dialog";
 import emptyBox from "../util/emptyBox";
+import formatData from "../util/formate";
 let listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
-let todoList = document.getElementsByName("todoList");
-let doneList = document.getElementsByName("doneList");
 let conTodoUl = document.querySelector(".con-todo-ul");
 let conDoneUl = document.querySelector(".con-done-ul");
 let selectAllTodo = document.getElementById("selectAllTodo");
 let selectAllDone = document.getElementById("selectAllDone");
 let taskLabel = document.getElementsByClassName("taskLabel");
 let newDialog = document.querySelector(".tasksNewDialog");
+let dialogBox = document.querySelector(".dialog-box");
 // 新建todoList
+// 新建待办项的UI
+const changeNewStatus = (newtodo) => {
+  const { dom, checkbox } = createTodo(newtodo, "TODO");
+  removeEmptyBox(conTodoUl);
+  addCheckName(newtodo, dom, checkbox, conTodoUl);
+};
+// 新建待办项的data
+const changeNewData = (newtodo, data) => {
+  data.push(newtodo); //往todolist中添加对象
+  localStorage.setItem("listItem", JSON.stringify(data)); //将JS对象转化成JSON对象并保存到本地
+};
+const newSure = () => {
+  let dialogInputName = document.querySelector("#dialog-input-name");
+  let dialogInputTime = document.querySelector("#dialog-input-time");
+  let listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
+  let curTime = formatData(new Date());
+  let newtodo = {
+    taskId: listItem[listItem.length - 1].taskId + 1,
+    taskName: "", //输入的内容
+    createTime: "",
+    status: true,
+  };
+  let nameValue = dialogInputName.value; //使用nameValue存储
+  let finishTime = dialogInputTime.value;
+  if (inputValue(nameValue) || inputValue(finishTime)) {
+    return;
+  } else {
+    var flag = confirm("您确定要添加该事项吗?"); //弹出确认框
+    if (flag) {
+      newtodo.taskName = nameValue;
+      newtodo.createTime = curTime;
+      newtodo.finishTime = finishTime;
+      changeNewStatus(newtodo);
+      changeNewData(newtodo, listItem, nameValue, finishTime);
+      alert("添加成功");
+    } else {
+      alert("操作取消");
+    }
+    closeDialog();
+  }
+};
 const newTodoList = () => {
   newDialog.addEventListener("click", () => {
-    dialogModel("tasksNewDialog");
+    // dialogModel("tasksNewDialog");
+    initDialog({
+      text: "新建任务项",
+      nameValue: "",
+      timeValue: formatData(new Date()),
+      okEvent: newSure,
+    });
+    popupDialog();
   });
 };
 // todo中的全选
 // 更改状态
-const changeAllStatus = (ul, domList) => {
-  removeEmptyBox(ul);
-  for (let i = 0; i < domList.length; i++) {
-    domList[i].firstChild.checked
-      ? ((domList[i].firstChild.checked = false),
-        (domList[i].firstChild.name = "todoList"))
-      : ((domList[i].firstChild.checked = true),
-        (domList[i].firstChild.name = "doneList"));
-    ul.appendChild(domList[i].cloneNode(true));
-    // console.log("domList[i]11: ", domList[i]),
-    // ul.appendChild(domList[i]))
+const changeAllStatus = (fragment, ul, domList) => {
+  if (ul.firstChild) {
+    removeEmptyBox(ul);
   }
+  domList.firstChild.name === "todoList"
+    ? ((domList.firstChild.checked = true),
+      (domList.firstChild.name = "doneList"))
+    : ((domList.firstChild.checked = false),
+      (domList.firstChild.name = "todoList"));
+  fragment.appendChild(domList);
 };
-const changeAllStatus2 = (ul, domList) => {
-  console.log("domList: ", domList);
-  console.log("domList.firstChild.checked: ", domList.firstChild.checked);
-  removeEmptyBox(ul);
-  // for (let i = 0; i < domList.length; i++) {
-  domList.firstChild.checked
-    ? ((domList.firstChild.checked = false),
-      (domList.firstChild.name = "todoList"))
-    : ((domList.firstChild.checked = true),
-      (domList.firstChild.name = "doneList"));
-  ul.appendChild(domList);
-  // console.log("domList[i]11: ", domList[i]),
-  // ul.appendChild(domList[i]))
-  // }
-};
+// 更改数据
 const changeAllData = (list, data, status) => {
   if (list.length !== 0) {
     for (let i = 0; i < data.length; i++) {
-      if (data[i].status) {
-        data[i].status = status;
-      }
+      data[i].status = status;
     }
   }
 };
 const selectAllTodoList = () => {
-  changeAllData(todoList, listItem, false);
+  listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
+  changeAllData(conTodoUl.childNodes, listItem, false);
+  let length = conTodoUl.childNodes.length;
+  let fragmentTodo = document.createDocumentFragment();
+  for (let i = 0; i < length; i++) {
+    changeAllStatus(fragmentTodo, conDoneUl, conTodoUl.childNodes[0]);
+  }
+  conDoneUl.appendChild(fragmentTodo);
   conTodoUl.innerHTML = "";
-  // for (let i = 0; i < conTodoUl.childNodes.length; i++) {
-  //   changeAllStatus2(conDoneUl, conTodoUl.childNodes[i]);
-  // }
-  changeAllStatus(conDoneUl, conTodoUl.childNodes);
-
   listEmpty(selectAllTodo, taskLabel[0]);
   listNotEmpty(selectAllDone, taskLabel[1]);
   conTodoUl.appendChild(emptyBox("今日任务为空，快去创建吧～"));
   localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
 };
 const selectAllDoneList = () => {
-  console.log("conDoneUl.childNodes.length: ", conDoneUl.childNodes.length);
-  changeAllData(doneList, listItem, true);
+  listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
+  changeAllData(conDoneUl.childNodes, listItem, true);
+  let length = conDoneUl.childNodes.length;
+  let fragmentDone = document.createDocumentFragment();
+  for (let i = 0; i < length; i++) {
+    changeAllStatus(fragmentDone, conTodoUl, conDoneUl.childNodes[0]);
+  }
+  conTodoUl.appendChild(fragmentDone);
   conDoneUl.innerHTML = "";
-  // for (let i = 0; i < conDoneUl.childNodes.length; i++) {
-  //   changeAllStatus2(conTodoUl, conDoneUl.childNodes[i]);
-  // }
-  changeAllStatus(conTodoUl, conDoneUl.childNodes);
-
   listEmpty(selectAllDone, taskLabel[1]);
   listNotEmpty(selectAllTodo, taskLabel[0]);
   conDoneUl.appendChild(emptyBox("今日还没有完成任务～"));
@@ -123,7 +163,6 @@ const changeData = (e, data) => {
 };
 const changeList = (e) => {
   listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
-  console.log("listItem: ", listItem);
   isListUl(e)
     ? // todo
       changeStatus(
@@ -167,14 +206,66 @@ const delList = (e) => {
   localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
   e.target.parentNode.parentNode.removeChild(e.target.parentNode);
 };
+
 // 编辑
 const getEditData = (e, data) => {
   const item = data.find(({ taskId }) => e.target.parentNode.id == taskId);
   return item;
 };
+// 编辑 修改UI
+const changeEditStatus = (element, nameValue) => {
+  element.target.parentNode.childNodes.forEach((item) => {
+    if (item.tagName === "SPAN") {
+      item.innerText = nameValue;
+    }
+  });
+};
+// 编辑 修改数据
+const changeEditData = (data, list, nameValue, finishTime) => {
+  data.forEach((item) => {
+    if (item.taskId === list.taskId) {
+      item.taskName = nameValue;
+      item.finishTime = finishTime;
+    }
+  });
+};
+// 编辑确认事件判断
+const editSure = () => {
+  let dialogInputName = document.querySelector("#dialog-input-name");
+  let dialogInputTime = document.querySelector("#dialog-input-time");
+  const params = dialogBox._editParams;
+  let nameValue = dialogInputName.value;
+  let finishTime = dialogInputTime.value;
+  if (inputValue(nameValue) || inputValue(finishTime)) {
+    return;
+  }
+  var flag = confirm("您确定要修改该事项吗?");
+  if (flag) {
+    let listItem = JSON.parse(localStorage.getItem("listItem"));
+    changeEditStatus(params.e, nameValue);
+    changeEditData(listItem, params.item, nameValue, finishTime);
+    localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
+    console.log("listItem: ", listItem);
+    alert("编辑成功");
+  } else {
+    alert("操作取消");
+    return;
+  }
+  closeDialog();
+};
+// 调用编辑弹窗
 const editList = (e) => {
   let listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地数据
-  dialogModel("editorDialog", e, getEditData(e, listItem));
+  let item = getEditData(e, listItem);
+  dialogBox._editParams = { e, item };
+  // dialogModel("editorDialog", e, getEditData(e, listItem));
+  initDialog({
+    text: "编辑任务项",
+    nameValue: item.taskName,
+    timeValue: item.finishTime,
+    okEvent: editSure,
+  });
+  popupDialog();
 };
 
 // 未完成的勾选事件

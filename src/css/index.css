@@ -229,7 +229,7 @@
 }
 
 /* 弹窗 */
-.diolog-box {
+.dialog-box {
   position: fixed;
   top: 0;
   left: 0;
@@ -238,7 +238,7 @@
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 9999;
 }
-.diolog-con {
+.dialog-con {
   position: relative;
   width: 400px;
   height: 250px;
@@ -248,12 +248,12 @@
   transform: translateY(-50%);
   background: #eee;
 }
-.diolog-tip {
+.dialog-tip {
   font-size: 20px;
   color: #ff8400;
   font-weight: 700;
 }
-.diolog-input {
+.dialog-input {
   height: 60px;
   line-height: 60px;
   display: flex;
@@ -261,20 +261,20 @@
   width: 80%;
   margin: 20px;
 }
-.diolog-input label {
+.dialog-input label {
   width: 100px;
   text-align: right;
   font-size: 16px;
 }
-.diolog-input input {
+.dialog-input input {
   width: 250px;
   height: 30px;
   margin-top: 13px;
   outline: none;
 }
-.diolog-input-btn {
+.dialog-input-btn {
   text-align: right;
 }
-.diolog-input-btn button {
+.dialog-input-btn button {
   margin-right: 10px;
 }

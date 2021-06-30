@@ -1,5 +1,7 @@
 import { createTodo, addCheckName } from "../init";
 import { objKeySort, classifyTime } from "../util/common";
+import emptyBox from "../util/emptyBox";
+
 // 创建div
 const createDiv = (dom) => {
   let div = document.createElement("div");
@@ -35,7 +37,7 @@ const classifyDom = (dataArr, fragment) => {
     createDom(dataArr[key], createUl(div)); //创建UL 将当前日期下的所有todoList添加到当前日期的ul下
   }
 };
-const allTodoList = (data) => {
+const doneList = (data) => {
   let allList = document.querySelector(".allList");
   allList.innerHTML = "";
   let fragmentAllTask = document.createDocumentFragment();
@@ -49,4 +51,4 @@ const allTodoList = (data) => {
     ? allList.appendChild(emptyBox("还没有待办项，快去创建吧～"))
     : allList.appendChild(fragmentAllTask);
 };
-export default allTodoList;
+export default doneList;

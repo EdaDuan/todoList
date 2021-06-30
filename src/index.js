@@ -15,9 +15,3 @@ initList(listData || tasks);
 // 导航栏
 navSwitch();
 newTodoList();
-// 阻止弹窗的冒泡事件
-document
-  .getElementsByClassName("diolog-con")[0]
-  .addEventListener("click", (e) => {
-    window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
-  });
