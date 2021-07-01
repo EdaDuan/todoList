@@ -1,6 +1,6 @@
 const emptyBox = (text) => {
   let listDiv = document.createElement("div");
-  listDiv.className = "nullList";
+  listDiv.className = "emity-list";
   listDiv.innerHTML = text;
   return listDiv;
 };

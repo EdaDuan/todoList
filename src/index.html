@@ -9,61 +9,72 @@
   </head>
 
   <body>
-    <header>
-      <div class="nav">
-        <ul class="nav-ul">
-          <li class="nav-li nav-todayTask">
-            <a href="#" class="nav-a">今日待办</a>
-          </li>
-          <li class="nav-li nav-allNotDone">
-            <a href="#" class="nav-a">未完成</a>
-          </li>
-          <li class="nav-li nav-allTask">
-            <a href="#" class="nav-a">全部</a>
-          </li>
-        </ul>
-      </div>
-    </header>
+    <div class="page">
+      <header>
+        <div class="nav">
+          <ul class="nav-ul">
+            <li class="nav-li nav-todayTask">
+              <a href="#" class="nav-a">今日待办</a>
+            </li>
+            <li class="nav-li nav-done">
+              <a href="#" class="nav-a">完成</a>
+            </li>
+            <li class="nav-li nav-notDone">
+              <a href="#" class="nav-a">未完成</a>
+            </li>
+            <li class="nav-li nav-recycle">
+              <a href="#" class="nav-a">回收站</a>
+            </li>
+          </ul>
+        </div>
+      </header>
 
-    <section>
-      <div class="container">
-        <div class="con-box con-todayTask">
-          <div class="con-tasks-newBg">
-            <button class="tasksNewDialog con-tasks-tip">新建+</button>
+      <section>
+        <div class="container">
+          <div class="con-box con-todayTask">
+            <div class="con-tasks-newBg">
+              <button class="tasks-new-dialog con-tasks-tip">新建+</button>
+            </div>
+            <div class="con-tasks con-todo">
+              <span class="con-tasks-tip">todayTodo</span>
+              <span class="con-tasks-tip con-tasks-choose">
+                <input id="selectAllTodo" type="checkbox" value="选择" />
+                <label class="taskLabel" for="selectAllTodo"></label>
+                全选
+              </span>
+              <ul class="con-tasks-ul con-todo-ul"></ul>
+            </div>
+            <div class="con-tasks con-Done">
+              <span class="con-tasks-tip">todayDone</span>
+              <span class="con-tasks-tip con-tasks-choose">
+                <input id="selectAllDone" type="checkbox" value="选择" />
+                <label class="taskLabel" for="selectAllDone"></label>
+                全选
+              </span>
+              <ul class="con-tasks-ul con-done-ul"></ul>
+            </div>
           </div>
-          <div class="con-tasks con-todo">
-            <span class="con-tasks-tip">todayTodo</span>
-            <span class="con-tasks-tip con-tasks-choose">
-              <input id="selectAllTodo" type="checkbox" value="选择" />
-              <label class="taskLabel" for="selectAllTodo"></label>
-              全选
-            </span>
-            <ul class="con-tasks-ul con-todo-ul"></ul>
+          <div class="con-box con-done">
+            <div class="con-tasks-bg">
+              <span class="con-tasks-tip">已完成</span>
+            </div>
+            <div class="allDone"></div>
           </div>
-          <div class="con-tasks con-Done">
-            <span class="con-tasks-tip">todayDone</span>
-            <span class="con-tasks-tip con-tasks-choose">
-              <input id="selectAllDone" type="checkbox" value="选择" />
-              <label class="taskLabel" for="selectAllDone"></label>
-              全选
-            </span>
-            <ul class="con-tasks-ul con-done-ul"></ul>
+          <div class="con-box con-notDone">
+            <div class="con-tasks-bg">
+              <span class="con-tasks-tip">未完成</span>
+            </div>
+            <div class="allNotDone"></div>
+          </div>
+          <div class="con-box con-recycle">
+            <div class="con-tasks-bg">
+              <span class="con-tasks-tip">回收站</span>
+            </div>
+            <div class="allRecycle"></div>
           </div>
         </div>
-        <div class="con-box con-allNotDone">
-          <div class="con-tasks-bg">
-            <span class="con-tasks-tip">未完成</span>
-          </div>
-          <div class="allNotDone"></div>
-        </div>
-        <div class="con-box con-allTasks">
-          <div class="con-tasks-bg">
-            <span class="con-tasks-tip">已完成</span>
-          </div>
-          <div class="allList"></div>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
     <!-- 弹窗 -->
     <div class="dialog-box" style="display: none"></div>

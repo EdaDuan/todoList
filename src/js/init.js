@@ -4,7 +4,7 @@ import formatData from "./util/formate";
 import {
   changeList,
   notDoneChangList,
-  allListChangList,
+  doneChangList,
   delList,
   editList,
   selectAllTodoList,
@@ -57,8 +57,8 @@ const chooseList = (listTag) => {
     case "NOTDONE":
       return notDoneChangList;
     //  已完成
-    case "ALLLIST":
-      return allListChangList;
+    case "DONE":
+      return doneChangList;
     default:
       console.log("error");
   }
@@ -105,7 +105,7 @@ const initList = (data) => {
   selectAllTodo.addEventListener("click", selectAllTodoList, false);
   selectAllDone.addEventListener("click", selectAllDoneList, false);
   const filterTodoList = data.filter(
-    (item) => item.finishTime == formatData(new Date())
+    (item) => item.finishTime == formatData(new Date()) && !item.isDel
   );
   filterTodoList.forEach((item) => {
     const { dom, checkbox } = createTodo(item, "TODO");

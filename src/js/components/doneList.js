@@ -5,28 +5,28 @@ import emptyBox from "../util/emptyBox";
 // 创建div
 const createDiv = (dom) => {
   let div = document.createElement("div");
-  div.setAttribute("class", "allListBox");
+  div.setAttribute("class", "doneBox");
   dom.appendChild(div);
   return div;
 };
 // 创建span
 const createSpan = (dom, data) => {
   let span = document.createElement("span");
-  span.setAttribute("class", "allListData");
+  span.setAttribute("class", "doneData");
   span.innerText = data;
   dom.appendChild(span);
 };
 // 创建ul
 const createUl = (dom) => {
   let ul = document.createElement("ul");
-  ul.setAttribute("class", "allListUl");
+  ul.setAttribute("class", "doneUl");
   dom.appendChild(ul);
   return ul;
 };
 // 创建分类的DOM
 const createDom = (obj, ul) => {
   obj.forEach((item) => {
-    const { dom, checkbox } = createTodo(item, "ALLLIST");
+    const { dom, checkbox } = createTodo(item, "DONE");
     addCheckName(item, dom, checkbox, ul);
   });
 };
@@ -38,17 +38,19 @@ const classifyDom = (dataArr, fragment) => {
   }
 };
 const doneList = (data) => {
-  let allList = document.querySelector(".allList");
-  allList.innerHTML = "";
+  let allDone = document.querySelector(".allDone");
+  allDone.innerHTML = "";
   let fragmentAllTask = document.createDocumentFragment();
   // 获取所有未完成的待办项
-  const filterAllList = data.filter((item) => item.status == false);
+  const filterallDone = data.filter(
+    (item) => item.status == false && !item.isDel
+  );
   // 获取分类后的数组
-  let classifyArr = classifyTime(filterAllList);
+  let classifyArr = classifyTime(filterallDone);
   // 获取分类后的DOM 传入排好序的数组
   classifyDom(objKeySort(classifyArr), fragmentAllTask);
   fragmentAllTask.childNodes.length === 0
-    ? allList.appendChild(emptyBox("还没有待办项，快去创建吧～"))
-    : allList.appendChild(fragmentAllTask);
+    ? allDone.appendChild(emptyBox("还没有待办项，快去创建吧～"))
+    : allDone.appendChild(fragmentAllTask);
 };
 export default doneList;

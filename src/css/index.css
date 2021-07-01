@@ -1,12 +1,20 @@
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 /* 顶部导航栏部分 */
 .nav {
-  min-width: 1000px;
+  position: relative;
+  width: 100vw;
   height: 60px;
   background: #aad2c7;
 }
 .nav-ul {
   position: absolute;
-  width: 1000px;
+  width: 80vw;
+  min-width: 20rem;
+  height: 100%;
   margin: 0 auto;
   top: 0px;
   bottom: 0px;
@@ -15,9 +23,9 @@
 }
 .nav-li {
   float: left;
-  max-width: 100px;
-  min-width: 80px;
-  line-height: 58px;
+  max-width: 8vw;
+  min-width: 5rem;
+  line-height: 55px;
   text-align: center;
   box-sizing: border-box;
   list-style: none;
@@ -30,31 +38,31 @@
   font-size: 16px;
   color: #fff;
 }
-.navLiMouseOver {
+.nav-li-mouse-over {
   border-top: 3px solid #ff8400;
   background-color: white;
 }
-.navLiMouseOut {
+.nav-li-mouse-out {
   border-top: transparent;
   background-color: transparent;
 }
 
 /* 内容部分 */
 .container {
-  position: absolute;
-  width: 1000px;
-  margin: 0 auto;
-  min-height: 650px;
-  top: 60px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  /* background: #eee; */
+  width: 100%;
+  flex: 1;
   color: #fff;
 }
 .con-box {
   display: none;
-  /* background: #666; */
+  width: 80vw;
+  min-width: 20rem;
+  margin: 0 auto;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  /* background: #eee; */
 }
 .con-tasks-newBg {
   width: 100px;
@@ -65,19 +73,18 @@
   background-size: 100%;
   background-repeat: no-repeat;
 }
-.tasksNewDialog {
+.tasks-new-dialog {
   border: none;
   background-color: transparent;
   outline: none;
 }
 .con-tasks {
   position: relative;
-  height: 270px;
+  height: 34.5vh;
   margin-top: 10px;
   padding: 10px 20px;
   border: 1px solid #eee;
   border-radius: 8px;
-  /* background: red; */
 }
 .con-tasks-tip {
   font-size: 18px;
@@ -104,7 +111,6 @@
   line-height: 40px;
   font-size: 16px;
   font-weight: bold;
-
   margin: 0 20px;
   text-decoration: none;
   text-align: left;
@@ -157,7 +163,14 @@
   color: #999;
 }
 .con-task-li span {
+  background: #fff;
+  display: inline-block;
+  vertical-align: bottom;
+  width: 20vw;
   padding-left: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .con-task-li button {
   float: right;
@@ -171,36 +184,37 @@
   background: transparent;
   cursor: pointer;
 }
-.nullList {
+.emity-list {
   width: 100%;
   height: 100%;
   text-align: center;
   color: #666;
-  font-size: 30px;
+  font-size: 1.8rem;
 }
 
-/* 未完成 */
+/* 完成 */
+.allDone,
 .allNotDone,
-.allList {
+.allRecycle {
   position: relative;
   margin-top: 10px;
   padding: 10px 20px;
-  min-height: 600px;
+  min-height: 75vh;
   border: 1px solid #eee;
   border-radius: 8px;
-  /* background: red; */
+  /* background: #666; */
 }
-
 .con-todo-ul,
-.allNotDone {
+.allNotDone,
+.recycleUl {
   color: #666;
 }
 .con-done-ul,
-.allList {
+.allDone {
   color: #999;
 }
 .con-done-ul span,
-.allListUl span {
+.doneUl span {
   text-decoration: line-through solid #999 2px;
 }
 .con-tasks-bg {
@@ -210,24 +224,45 @@
   line-height: 60px;
 }
 
-/* 未完成 */
+/* 未完成与完成 */
 .notDoneBox,
-.allListBox {
+.doneBox,
+.recycleUl {
   width: 100%;
   min-height: 100px;
   margin-top: 20px;
-  /* background: red; */
+}
+.notDoneBox .con-task-li,
+.doneBox .con-task-li,
+.recoverBox .con-task-li {
+  margin: 0;
 }
 .notDoneData,
-.allListData {
+.doneData {
   color: #ff8400;
   font-size: 24px;
 }
 .notoDoneUl,
-.allListUl {
+.doneUl {
   margin-top: 15px;
 }
-
+/* 回收站 */
+/* 清空 */
+.clearAll {
+  width: 60px;
+  height: 32px;
+  font-size: 16px;
+  border: none;
+  outline: 0;
+  color: #fff;
+  background: #ff8400;
+  cursor: pointer;
+}
+/* 序号 */
+.recoverLabel {
+  text-align: center;
+  line-height: 20px;
+}
 /* 弹窗 */
 .dialog-box {
   position: fixed;
@@ -240,7 +275,7 @@
 }
 .dialog-con {
   position: relative;
-  width: 400px;
+  width: 280px;
   height: 250px;
   margin: 0 auto;
   padding: 20px;
@@ -258,11 +293,11 @@
   line-height: 60px;
   display: flex;
   justify-content: space-between;
-  width: 80%;
+  width: 84%;
   margin: 20px;
 }
 .dialog-input label {
-  width: 100px;
+  width: 140px;
   text-align: right;
   font-size: 16px;
 }

@@ -99,7 +99,6 @@ const editSure = (element, list) => {
     changeEditStatus(element, nameValue);
     changeEditData(listItem, list, nameValue, finishTime);
     localStorage.setItem("listItem", JSON.stringify(listItem)); //将JS对象转化成JSON对象并保存到本地
-    console.log("listItem: ", listItem);
     alert("编辑成功");
     dialogBox.style.display = "none";
   } else {
@@ -110,10 +109,8 @@ const editSure = (element, list) => {
 };
 function handelFun() {
   if (dialogSure._status === "new") {
-    console.log("新建");
     handelNewSure();
   } else {
-    console.log("编辑");
     handelEditSure();
   }
 }
@@ -127,7 +124,6 @@ function handelEditSure() {
 }
 // 函数移除
 const unclick = () => {
-  console.log("调用了移除函数");
   dialogSure.removeEventListener("click", handelFun, false);
 };
 // 判断弹窗

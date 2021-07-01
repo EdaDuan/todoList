@@ -18,7 +18,7 @@ const createSpan = (dom, data) => {
 // 创建ul
 const createUl = (dom) => {
   let ul = document.createElement("ul");
-  ul.setAttribute("class", "notoDoneUl");
+  ul.setAttribute("class", "notDoneUl");
   dom.appendChild(ul);
   return ul;
 };
@@ -40,12 +40,14 @@ const classifyDom = (dataArr, fragment) => {
 };
 const notDoneList = (data) => {
   // data 当前的所有数据
-  // 获取最外层的ul
+  // 获取最外层的div
   let allNotDone = document.querySelector(".allNotDone");
   allNotDone.innerHTML = "";
   let fragmentNotDone = document.createDocumentFragment();
   // 获取所有未完成的待办项
-  const filterNotDoneList = data.filter((item) => item.status == true);
+  const filterNotDoneList = data.filter(
+    (item) => item.status == true && !item.isDel
+  );
   // 获取分类后的数组
   let classifyArr = classifyTime(filterNotDoneList);
   // 获取分类后的DOM 传入排好序的数组
