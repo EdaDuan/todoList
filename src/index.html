@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2021-06-16 16:05:32
+ * @LastEditTime: 2021-07-05 16:11:53
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /todoList/src/index.html
+-->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -13,16 +21,16 @@
       <header>
         <div class="nav">
           <ul class="nav-ul">
-            <li class="nav-li nav-todayTask">
+            <li class="nav-li">
               <a href="#" class="nav-a">今日待办</a>
             </li>
-            <li class="nav-li nav-done">
+            <li class="nav-li">
               <a href="#" class="nav-a">完成</a>
             </li>
-            <li class="nav-li nav-notDone">
+            <li class="nav-li">
               <a href="#" class="nav-a">未完成</a>
             </li>
-            <li class="nav-li nav-recycle">
+            <li class="nav-li">
               <a href="#" class="nav-a">回收站</a>
             </li>
           </ul>
@@ -31,7 +39,7 @@
 
       <section>
         <div class="container">
-          <div class="con-box con-todayTask">
+          <div class="con-box">
             <div class="con-tasks-newBg">
               <button class="tasks-new-dialog con-tasks-tip">新建+</button>
             </div>
@@ -54,22 +62,13 @@
               <ul class="con-tasks-ul con-done-ul"></ul>
             </div>
           </div>
-          <div class="con-box con-done">
-            <div class="con-tasks-bg">
-              <span class="con-tasks-tip">已完成</span>
-            </div>
+          <div class="con-box">
             <div class="allDone"></div>
           </div>
-          <div class="con-box con-notDone">
-            <div class="con-tasks-bg">
-              <span class="con-tasks-tip">未完成</span>
-            </div>
+          <div class="con-box">
             <div class="allNotDone"></div>
           </div>
-          <div class="con-box con-recycle">
-            <div class="con-tasks-bg">
-              <span class="con-tasks-tip">回收站</span>
-            </div>
+          <div class="con-box">
             <div class="allRecycle"></div>
           </div>
         </div>

@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2021-06-24 18:26:04
+ * @LastEditTime: 2021-07-05 15:32:58
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /todoList/src/js/util/common.js
+ */
 let conTodoUl = document.querySelector(".con-todo-ul");
 // 判断是否为空
 const removeEmptyBox = (ul) => {
@@ -50,7 +58,7 @@ const classifyTime = (data) => {
   }
   return listClassifyArr;
 };
-// 弹窗值为空的判断
+// input为空的判断
 const inputValue = (data) => {
   if (data.length == 0 && data.trim() == "") {
     //当输入为空时

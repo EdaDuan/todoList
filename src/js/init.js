@@ -113,13 +113,13 @@ const initList = (data) => {
   });
   fragmentTodo.childNodes.length === 0
     ? (listEmpty(selectAllTodo, taskLabel[0]),
-      conTodoUl.appendChild(emptyBox("今日任务为空，快去创建吧～")))
+      conTodoUl.appendChild(emptyBox("今日任务已全部完成～")))
     : (listNotEmpty(selectAllTodo, taskLabel[0]),
       conTodoUl.appendChild(fragmentTodo));
 
   fragmentDone.childNodes.length === 0
     ? (listEmpty(selectAllDone, taskLabel[1]),
-      conDoneUl.appendChild(emptyBox("今日还没有完成任务～")))
+      conDoneUl.appendChild(emptyBox("今日还未完成任务～")))
     : (listNotEmpty(selectAllDone, taskLabel[1]),
       conDoneUl.appendChild(fragmentDone));
 };

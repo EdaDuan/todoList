@@ -81,7 +81,6 @@ const recyclList = (data) => {
     "清空"
   );
   createDom(filterDelList, data, divBox);
-  console.log("divBox: ", divBox.lastChild.childNodes);
   divBox.lastChild.childNodes.length === 0
     ? divBox.lastChild.appendChild(emptyBox("回收站为空～"))
     : allRecycle.appendChild(divBox);
