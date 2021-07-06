@@ -1,7 +1,14 @@
-import { createTodo, addCheckName } from "../init";
+/*
+ * @Author: your name
+ * @Date: 2021-06-25 16:22:06
+ * @LastEditTime: 2021-07-06 11:26:54
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /todoList/src/js/components/doneList.js
+ */
+import { createTodo, addCheckName, todoListEvent } from "../init";
 import { objKeySort, classifyTime } from "../util/common";
 import emptyBox from "../util/emptyBox";
-
 // 创建div
 const createDiv = (dom) => {
   let div = document.createElement("div");
@@ -20,13 +27,14 @@ const createSpan = (dom, data) => {
 const createUl = (dom) => {
   let ul = document.createElement("ul");
   ul.setAttribute("class", "doneUl");
+  ul.addEventListener("click", todoListEvent.bind(this, "DONE"), false);
   dom.appendChild(ul);
   return ul;
 };
 // 创建分类的DOM
 const createDom = (obj, ul) => {
   obj.forEach((item) => {
-    const { dom, checkbox } = createTodo(item, "DONE");
+    const { dom, checkbox } = createTodo(item);
     addCheckName(item, dom, checkbox, ul);
   });
 };
@@ -50,7 +58,7 @@ const doneList = (data) => {
   // 获取分类后的DOM 传入排好序的数组
   classifyDom(objKeySort(classifyArr), fragmentAllTask);
   fragmentAllTask.childNodes.length === 0
-    ? allDone.appendChild(emptyBox("还没有待办项，快去创建吧～"))
+    ? allDone.appendChild(emptyBox("没有任务已完成～"))
     : allDone.appendChild(fragmentAllTask);
 };
 export default doneList;

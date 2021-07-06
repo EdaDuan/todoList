@@ -1,9 +1,91 @@
-import {
-  clearAllRecycle,
-  recoverRecycle,
-  clearRecycle,
-} from "../util/operation";
+/*
+ * @Author: your name
+ * @Date: 2021-06-30 18:57:26
+ * @LastEditTime: 2021-07-06 11:44:38
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /todoList/src/js/components/recyclList.js
+ */
 import emptyBox from "../util/emptyBox";
+// 修改状态
+const changeStatus = (ul, e) => {
+  ul.childNodes.length === 1
+    ? (ul.removeChild(e.target.parentNode),
+      ul.appendChild(emptyBox("回收站为空～")))
+    : ul.removeChild(e.target.parentNode);
+};
+// 待办项恢复
+// 修改数据
+const recoverData = (target, data) => {
+  const item = data.find(({ taskId }) => target.parentNode.id == taskId);
+  item.isDel = false;
+  localStorage.setItem("listItem", JSON.stringify(data));
+};
+
+const recoverRecycle = (data, e) => {
+  let recycleUl = document.querySelector(".recycleUl");
+  recoverData(e.target, data);
+  changeStatus(recycleUl, e);
+};
+
+// 删除回收站
+// 删除数据
+const clearData = (target, data) => {
+  data.splice(
+    data.findIndex((item) => item.taskId == Number(target.parentNode.id)),
+    1
+  );
+  localStorage.setItem("listItem", JSON.stringify(data));
+};
+const clearRecycle = (data, e) => {
+  let recycleUl = document.querySelector(".recycleUl");
+  clearData(e.target, data);
+  changeStatus(recycleUl, e);
+};
+// 清空回收站
+const clearAllData = (list, data) => {
+  list.forEach((itemList) => {
+    data.splice(
+      data.findIndex((item) => item.taskId === itemList.taskId),
+      1
+    );
+  });
+};
+// 清除样式
+const clearAllStatus = (ul) => {
+  ul.innerHTML = "";
+  ul.appendChild(emptyBox("回收站为空～"));
+};
+const clearAllRecycle = (list, data) => {
+  let recycleUl = document.querySelector(".recycleUl");
+  if (recycleUl.firstChild.tagName !== "DIV") {
+    var flag = confirm("您确定清空回收站吗?"); //弹出确认框
+    if (flag) {
+      clearAllStatus(recycleUl);
+      // 清除数据
+      clearAllData(list, data);
+      alert("清空成功");
+    } else {
+      alert("操作取消");
+    }
+  } else {
+    alert("当前回收站为空～");
+  }
+  localStorage.setItem("listItem", JSON.stringify(data)); //将JS对象转化成JSON对象并保存到本地
+};
+const recycleEvent = (data, e) => {
+  if (e.target.nodeName.toLocaleLowerCase() == "input") {
+    switch (e.target.id) {
+      case "recover":
+        recoverRecycle.call(this, data, e);
+        break;
+      case "remove":
+        clearRecycle.call(this, data, e);
+        break;
+      default:
+    }
+  }
+};
 // 创建div
 const createDiv = (dom, className) => {
   let div = document.createElement("div");
@@ -12,9 +94,10 @@ const createDiv = (dom, className) => {
   return div;
 };
 // 创建ul
-const createUl = (dom, className) => {
+const createUl = (dom, className, data) => {
   let ul = document.createElement("ul");
   ul.setAttribute("class", className);
+  ul.addEventListener("click", recycleEvent.bind(this, data), false);
   dom.appendChild(ul);
   return ul;
 };
@@ -31,13 +114,14 @@ const createSpan = (data, dom) => {
   span.innerText = data.taskName;
   dom.appendChild(span);
 };
-// 恢复
-const createBtn = (dom, clickEvent, className, text) => {
-  let recoverBtn = document.createElement("button");
-  recoverBtn.setAttribute("class", className);
-  recoverBtn.addEventListener("click", clickEvent, false);
-  recoverBtn.innerHTML = text;
-  dom.appendChild(recoverBtn);
+// 创建按钮
+const createBtn = (dom, className, id, text) => {
+  let btn = document.createElement("input");
+  btn.setAttribute("class", className);
+  btn.setAttribute("type", "button");
+  btn.setAttribute("id", id);
+  btn.setAttribute("value", text);
+  dom.appendChild(btn);
 };
 const createItem = (index, itemList, data, fragment, className) => {
   let li = document.createElement("li");
@@ -45,23 +129,13 @@ const createItem = (index, itemList, data, fragment, className) => {
   li.setAttribute("class", className);
   createLabel(li, index + 1, "recoverLabel");
   createSpan(itemList, li);
-  createBtn(
-    li,
-    recoverRecycle.bind(this, li, itemList, data),
-    "recoverBtn",
-    "恢复"
-  );
-  createBtn(
-    li,
-    clearRecycle.bind(this, li, itemList, data),
-    "recoverBtn",
-    "删除"
-  );
+  createBtn(li, "recoverBtn", "recover", "恢复");
+  createBtn(li, "delBtn", "remove", "删除");
   fragment.appendChild(li);
 };
 // 创建回收站的DOM
 const createDom = (list, data, dom) => {
-  let ul = createUl(dom, "recycleUl");
+  let ul = createUl(dom, "recycleUl", data);
   let fragmentLi = document.createDocumentFragment();
   list.forEach((item, index) => {
     createItem(index, item, data, fragmentLi, "con-task-li");
@@ -74,12 +148,16 @@ const recyclList = (data) => {
   let divBox = createDiv(allRecycle, "recoverBox");
   // 获取所以删除的数据
   const filterDelList = data.filter((item) => item.isDel);
-  createBtn(
-    divBox,
+  let clearAllbtn = document.createElement("input");
+  clearAllbtn.setAttribute("class", "clearAll");
+  clearAllbtn.setAttribute("type", "button");
+  clearAllbtn.addEventListener(
+    "click",
     clearAllRecycle.bind(this, filterDelList, data),
-    "clearAll",
-    "清空"
+    false
   );
+  clearAllbtn.setAttribute("value", "清空");
+  divBox.appendChild(clearAllbtn);
   createDom(filterDelList, data, divBox);
   divBox.lastChild.childNodes.length === 0
     ? divBox.lastChild.appendChild(emptyBox("回收站为空～"))

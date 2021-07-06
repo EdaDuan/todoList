@@ -13,7 +13,7 @@ import formatData from "../util/formate";
 // 新建todoList
 // 新建待办项的UI
 const changeNewStatus = (newtodo, domUl, domInput, domLabel) => {
-  const { dom, checkbox } = createTodo(newtodo, "TODO");
+  const { dom, checkbox } = createTodo(newtodo);
   if (domUl.childNodes.length === 1) {
     // 全选按钮可选
     removeEmptyBox(domUl);
@@ -63,7 +63,6 @@ const newSure = () => {
 // 新建待办项的弹窗
 const newTodoList = () => {
   let newDialog = document.querySelector(".tasks-new-dialog");
-  console.log(new Date());
   newDialog.addEventListener("click", () => {
     initDialog({
       text: "新建任务项",
@@ -173,7 +172,6 @@ const changeData = (e, data) => {
   localStorage.setItem("listItem", JSON.stringify(data)); //将JS对象转化成JSON对象并保存到本地
 };
 const changeList = (e) => {
-  console.log("e: ", e);
   let conTodoUl = document.querySelector(".con-todo-ul");
   let conDoneUl = document.querySelector(".con-done-ul");
   let selectAllTodo = document.getElementById("selectAllTodo");
@@ -324,72 +322,6 @@ const doneChangList = (e) => {
   // 改变数据
   changeData(e, listItem);
 };
-// 清空回收站
-const clearAllData = (list, data) => {
-  list.forEach((itemList) => {
-    data.splice(
-      data.findIndex((item) => item.taskId === itemList.taskId),
-      1
-    );
-  });
-};
-// 清除样式
-const clearAllStatus = (ul) => {
-  ul.innerHTML = "";
-  ul.appendChild(emptyBox("回收站为空～"));
-};
-const clearAllRecycle = (list, data) => {
-  let recycleUl = document.querySelector(".recycleUl");
-  if (recycleUl.firstChild.tagName !== "DIV") {
-    var flag = confirm("您确定清空回收站吗?"); //弹出确认框
-    if (flag) {
-      clearAllStatus(recycleUl);
-      // 清除数据
-      clearAllData(list, data);
-      alert("清空成功");
-    } else {
-      alert("操作取消");
-    }
-  }
-  localStorage.setItem("listItem", JSON.stringify(data)); //将JS对象转化成JSON对象并保存到本地
-};
-// 待办项恢复
-// 修改数据
-const recoverData = (list, data) => {
-  const item = data.find(({ taskId }) => list.taskId == taskId);
-  item.isDel = false;
-  localStorage.setItem("listItem", JSON.stringify(data));
-};
-// 修改状态
-const recoverStatus = (ul, e) => {
-  ul.removeChild(e);
-};
-const recoverRecycle = (e, list, data) => {
-  let recycleUl = document.querySelector(".recycleUl");
-  recoverData(list, data);
-  recoverStatus(recycleUl, e);
-};
-
-// 删除回收站
-// 删除数据
-const clearData = (data, list) => {
-  data.splice(
-    data.findIndex((item) => item.taskId === list.taskId),
-    1
-  );
-  localStorage.setItem("listItem", JSON.stringify(data));
-};
-const clearStatus = (ul, e) => {
-  ul.childNodes.length === 1
-    ? (ul.removeChild(e), ul.appendChild(emptyBox("回收站为空～")))
-    : ul.removeChild(e);
-};
-
-const clearRecycle = (e, list, data) => {
-  let recycleUl = document.querySelector(".recycleUl");
-  clearData(data, list);
-  clearStatus(recycleUl, e);
-};
 export {
   newTodoList,
   changeList,
@@ -399,7 +331,4 @@ export {
   editList,
   selectAllTodoList,
   selectAllDoneList,
-  clearAllRecycle,
-  recoverRecycle,
-  clearRecycle,
 };

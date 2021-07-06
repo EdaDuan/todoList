@@ -1,4 +1,12 @@
-import { createTodo, addCheckName } from "../init";
+/*
+ * @Author: your name
+ * @Date: 2021-06-25 16:07:16
+ * @LastEditTime: 2021-07-06 10:53:19
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /todoList/src/js/components/notDoneList.js
+ */
+import { createTodo, addCheckName, todoListEvent } from "../init";
 import { objKeySort, classifyTime } from "../util/common";
 import emptyBox from "../util/emptyBox";
 // 创建div
@@ -19,6 +27,7 @@ const createSpan = (dom, data) => {
 const createUl = (dom) => {
   let ul = document.createElement("ul");
   ul.setAttribute("class", "notDoneUl");
+  ul.addEventListener("click", todoListEvent.bind(this, "NOTDONE"), false);
   dom.appendChild(ul);
   return ul;
 };
@@ -26,7 +35,7 @@ const createUl = (dom) => {
 // 创建分类的DOM
 const createDom = (obj, ul) => {
   obj.forEach((item) => {
-    const { dom, checkbox } = createTodo(item, "NOTDONE");
+    const { dom, checkbox } = createTodo(item);
     addCheckName(item, dom, checkbox, ul);
   });
 };

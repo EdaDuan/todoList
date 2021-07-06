@@ -114,7 +114,7 @@
   cursor: pointer;
   border: 1px solid #666;
 }
-.con-task-li input,
+.con-task-li input[type="checkbox"],
 #selectAllTodo,
 #selectAllDone {
   visibility: hidden;
@@ -157,7 +157,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.con-task-li button {
+.con-task-li button,
+.con-task-li input[type="button"] {
   float: right;
   width: 3.75rem;
   height: 2.5rem;
@@ -171,13 +172,12 @@
 }
 .emity-list {
   width: 100%;
-  height: 100%;
   text-align: center;
+  padding-top: 10%;
   color: #666;
   font-size: 1.8rem;
 }
-
-/* 完成 */
+/* 完成 未完成 回首站 */
 .allDone,
 .allNotDone,
 .allRecycle {
@@ -231,6 +231,7 @@
   width: 4rem;
   height: 2rem;
   font-size: 1rem;
+  text-align: center;
   border: none;
   outline: 0;
   color: #fff;
