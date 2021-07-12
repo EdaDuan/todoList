@@ -1,35 +1,35 @@
 /*
  * @Author: your name
  * @Date: 2021-06-17 10:17:57
- * @LastEditTime: 2021-07-05 10:14:10
+ * @LastEditTime: 2021-07-10 10:36:45
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/navSwitch.js
  */
-import { initList } from "../init";
+
+import { todoListDataRender } from "../components/todoList";
 import doneList from "../components/doneList";
 import notDoneList from "../components/notDoneList";
 import recyclLis from "../components/recyclList";
+import { getData } from "../../http";
+
 const navSwitch = () => {
-  let liItem = document.getElementsByClassName("nav-li");
+  var topNav = document.getElementById("top-nav");
+  let liItem = topNav.getElementsByTagName("li");
   let boxItem = document.getElementsByClassName("con-box");
-
-  let listArr = [initList, doneList, notDoneList, recyclLis];
+  let listArr = [todoListDataRender, doneList, notDoneList, recyclLis];
   boxItem[0].classList.add("current");
-
-  liItem[0].classList.add("nav-li-mouse-over");
+  liItem[0].className = "nav-li-current";
   for (var i = 0; i < liItem.length; i++) {
     (function (i) {
-      liItem[i].onclick = function () {
+      liItem[i].onclick = async function () {
         for (var j = 0; j < boxItem.length; j++) {
-          liItem[j].classList.add("nav-li-mouse-out");
-          liItem[j].classList.remove("nav-li-mouse-over");
+          liItem[j].className = "";
           boxItem[j].classList.remove("current");
         }
-        let listItem = JSON.parse(localStorage.getItem("listItem")); //获取本地的数据
-        listArr[i](listItem);
-        liItem[i].classList.add("nav-li-mouse-over");
-        liItem[i].classList.remove("nav-li-mouse-out");
+        let res = await getData();
+        listArr[i](res.data);
+        liItem[i].className = "nav-li-current";
         boxItem[i].classList.add("current");
       };
     })(i);

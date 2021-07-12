@@ -1,12 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2021-06-30 18:57:26
- * @LastEditTime: 2021-07-06 11:44:38
+ * @LastEditTime: 2021-07-12 09:58:02
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/recyclList.js
  */
-import emptyBox from "../util/emptyBox";
+import { emptyBox } from "../util/common";
+import { deleteTodoList, moveTodoList } from "../../http";
 // 修改状态
 const changeStatus = (ul, e) => {
   ul.childNodes.length === 1
@@ -16,13 +17,16 @@ const changeStatus = (ul, e) => {
 };
 // 待办项恢复
 // 修改数据
-const recoverData = (target, data) => {
+const recoverData = async (target, data) => {
   const item = data.find(({ taskId }) => target.parentNode.id == taskId);
-  item.isDel = false;
-  localStorage.setItem("listItem", JSON.stringify(data));
+  // item.isDel = false;
+  await moveTodoList(item);
+  // localStorage.setItem("listItem", JSON.stringify(data));
 };
 
 const recoverRecycle = (data, e) => {
+  console.log("e: ", e);
+  console.log("data: ", data);
   let recycleUl = document.querySelector(".recycleUl");
   recoverData(e.target, data);
   changeStatus(recycleUl, e);
@@ -30,12 +34,11 @@ const recoverRecycle = (data, e) => {
 
 // 删除回收站
 // 删除数据
-const clearData = (target, data) => {
-  data.splice(
-    data.findIndex((item) => item.taskId == Number(target.parentNode.id)),
-    1
-  );
-  localStorage.setItem("listItem", JSON.stringify(data));
+const clearData = async (target, data) => {
+  console.log("data: ", data);
+  let item = [];
+  item.push(data.find((item) => item.taskId == Number(target.parentNode.id)));
+  await deleteTodoList(item);
 };
 const clearRecycle = (data, e) => {
   let recycleUl = document.querySelector(".recycleUl");
@@ -43,13 +46,13 @@ const clearRecycle = (data, e) => {
   changeStatus(recycleUl, e);
 };
 // 清空回收站
-const clearAllData = (list, data) => {
-  list.forEach((itemList) => {
-    data.splice(
-      data.findIndex((item) => item.taskId === itemList.taskId),
-      1
-    );
-  });
+const clearAllData = async (list, recycleUl) => {
+  let res = await deleteTodoList(list);
+  if (res.ok) {
+    clearAllStatus(recycleUl);
+  } else {
+    alert("回收站清空失败～");
+  }
 };
 // 清除样式
 const clearAllStatus = (ul) => {
@@ -61,10 +64,8 @@ const clearAllRecycle = (list, data) => {
   if (recycleUl.firstChild.tagName !== "DIV") {
     var flag = confirm("您确定清空回收站吗?"); //弹出确认框
     if (flag) {
-      clearAllStatus(recycleUl);
       // 清除数据
-      clearAllData(list, data);
-      alert("清空成功");
+      clearAllData(list, recycleUl);
     } else {
       alert("操作取消");
     }
@@ -148,6 +149,7 @@ const recyclList = (data) => {
   let divBox = createDiv(allRecycle, "recoverBox");
   // 获取所以删除的数据
   const filterDelList = data.filter((item) => item.isDel);
+  console.log("filterDelList: ", filterDelList);
   let clearAllbtn = document.createElement("input");
   clearAllbtn.setAttribute("class", "clearAll");
   clearAllbtn.setAttribute("type", "button");

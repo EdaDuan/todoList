@@ -3,38 +3,30 @@
   html {
     font-size: 16px;
   }
-  .container {
+  #container {
     display: grid;
+    width: 90%;
+    margin: 0 auto;
   }
   .nav-ul {
     display: flex;
   }
-  .nav-li {
+  .nav-ul li {
     flex: 1;
   }
 }
-.nav {
+#top-nav {
   background: #aad2c7;
 }
-.nav-li {
+.nav-ul li {
   line-height: 3.5rem;
   text-align: center;
-  list-style: none;
+  cursor: pointer;
 }
-.nav-a {
-  font-size: 1rem;
-  color: #fff;
-}
-.nav-li-mouse-over {
+.nav-li-current {
   border-top: 3px solid #ff8400;
   background-color: white;
-}
-.nav-li-mouse-over a {
   color: #ff8400;
-}
-.nav-li-mouse-out {
-  border-top: transparent;
-  background-color: transparent;
 }
 
 /* 内容部分 */
@@ -189,13 +181,13 @@
   border-radius: 8px;
   /* background: #666; */
 }
-.con-todo-ul,
-.allNotDone,
-.recycleUl {
+.con-todo-ul span,
+.allNotDone span,
+.recycleUl span {
   color: #666;
 }
-.con-done-ul,
-.allDone {
+.con-done-ul span,
+.allDone span {
   color: #999;
 }
 .con-done-ul span,
@@ -216,8 +208,8 @@
 .recoverBox .con-task-li {
   margin: 0;
 }
-.notDoneData,
-.doneData {
+#notDoneData,
+#doneData {
   color: #ff8400;
   font-size: 1.5rem;
 }

@@ -1,14 +1,16 @@
 /*
  * @Author: your name
  * @Date: 2021-06-25 16:22:06
- * @LastEditTime: 2021-07-06 11:26:54
+ * @LastEditTime: 2021-07-12 09:39:13
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/doneList.js
  */
-import { createTodo, addCheckName, todoListEvent } from "../init";
-import { objKeySort, classifyTime } from "../util/common";
-import emptyBox from "../util/emptyBox";
+import { todoListEvent } from "../util/operation";
+import { createTodo, addCheckName } from "./createTodo";
+import { objKeySort, classifyTime, emptyBox } from "../util/common";
+import formatData from "../util/formate";
+
 // 创建div
 const createDiv = (dom) => {
   let div = document.createElement("div");
@@ -19,7 +21,7 @@ const createDiv = (dom) => {
 // 创建span
 const createSpan = (dom, data) => {
   let span = document.createElement("span");
-  span.setAttribute("class", "doneData");
+  span.setAttribute("id", "doneData");
   span.innerText = data;
   dom.appendChild(span);
 };
@@ -27,7 +29,11 @@ const createSpan = (dom, data) => {
 const createUl = (dom) => {
   let ul = document.createElement("ul");
   ul.setAttribute("class", "doneUl");
-  ul.addEventListener("click", todoListEvent.bind(this, "DONE"), false);
+  ul.addEventListener(
+    "click",
+    todoListEvent.bind(this, "DONE", "DONEDEL"),
+    false
+  );
   dom.appendChild(ul);
   return ul;
 };
@@ -41,11 +47,12 @@ const createDom = (obj, ul) => {
 const classifyDom = (dataArr, fragment) => {
   for (let key in dataArr) {
     let div = createDiv(fragment); //创建DIV，挂载到fragment上
-    createSpan(div, key); //在DIV上添加span 显示日期
+    createSpan(div, formatData(new Date(Number(key)))); //在DIV上添加span 显示日期
     createDom(dataArr[key], createUl(div)); //创建UL 将当前日期下的所有todoList添加到当前日期的ul下
   }
 };
 const doneList = (data) => {
+  console.log("data: ", data);
   let allDone = document.querySelector(".allDone");
   allDone.innerHTML = "";
   let fragmentAllTask = document.createDocumentFragment();

@@ -6,7 +6,14 @@
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/common.js
  */
+
 let conTodoUl = document.querySelector(".con-todo-ul");
+const emptyBox = (text) => {
+  let listDiv = document.createElement("div");
+  listDiv.className = "emity-list";
+  listDiv.innerHTML = text;
+  return listDiv;
+};
 // 判断是否为空
 const removeEmptyBox = (ul) => {
   if (ul.firstChild.tagName === "DIV") {
@@ -75,4 +82,5 @@ export {
   objKeySort,
   classifyTime,
   inputValue,
+  emptyBox,
 };

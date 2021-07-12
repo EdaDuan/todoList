@@ -27,7 +27,7 @@ html {
 }
 body {
   background: #fff;
-  width: 90%;
+  width: 100%;
   min-width: 20rem;
   margin: 0 auto;
 
@@ -45,6 +45,7 @@ em {
   font-style: normal;
 }
 li {
+  color: #fff;
   list-style: none;
 }
 img {
