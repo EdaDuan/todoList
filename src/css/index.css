@@ -7,6 +7,7 @@
     display: grid;
     width: 90%;
     margin: 0 auto;
+    /* background: #eee; */
   }
   .nav-ul {
     display: flex;
@@ -32,12 +33,6 @@
 /* 内容部分 */
 .con-box {
   display: none;
-  width: 100%;
-  margin: 0 auto;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
 }
 .current {
   display: block;
@@ -170,6 +165,14 @@
   font-size: 1.8rem;
 }
 /* 完成 未完成 回首站 */
+/* 未完成与完成 */
+.notDoneBox,
+.doneBox,
+.recycleUl {
+  width: 100%;
+  min-height: 6.25rem;
+  margin-top: 1.25rem;
+}
 .allDone,
 .allNotDone,
 .allRecycle {
@@ -179,7 +182,6 @@
   min-height: 75vh;
   border: 1px solid #eee;
   border-radius: 8px;
-  /* background: #666; */
 }
 .con-todo-ul span,
 .allNotDone span,
@@ -187,25 +189,13 @@
   color: #666;
 }
 .con-done-ul span,
-.allDone span {
-  color: #999;
-}
-.con-done-ul span,
 .doneUl span {
+  color: #999;
   text-decoration: line-through solid #999 2px;
-}
-
-/* 未完成与完成 */
-.notDoneBox,
-.doneBox,
-.recycleUl {
-  width: 100%;
-  min-height: 6.25rem;
-  margin-top: 1.25rem;
 }
 .notDoneBox .con-task-li,
 .doneBox .con-task-li,
-.recoverBox .con-task-li {
+.allRecycle .con-task-li {
   margin: 0;
 }
 #notDoneData,
@@ -213,7 +203,7 @@
   color: #ff8400;
   font-size: 1.5rem;
 }
-.notoDoneUl,
+.notDoneUl,
 .doneUl {
   margin-top: 1rem;
 }
@@ -234,6 +224,7 @@
 .recoverLabel {
   text-align: center;
   line-height: 1.25rem;
+  color: #666;
 }
 /* 弹窗 */
 .dialog-box {

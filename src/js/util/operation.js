@@ -17,6 +17,7 @@ import {
   moveTodoList,
   editTodoList,
 } from "../../http";
+import { todoListDataRender } from "../components/todoList";
 
 let conTodoUl = document.querySelector(".con-todo-ul");
 let conDoneUl = document.querySelector(".con-done-ul");
@@ -34,18 +35,11 @@ const changeNewStatus = (newtodo, domUl, domInput, domLabel) => {
   }
   addCheckName(newtodo, dom, checkbox, domUl);
 };
-// 新建待办项的data
-const changeNewData = async (newtodo) => {
-  let res = await insertData(newtodo);
-  return res.ok ? res.ok : alert("新建失败～"), res.ok;
-};
 const newSure = async () => {
   let dialogInputName = document.querySelector("#dialog-input-name");
   let dialogInputTime = document.querySelector("#dialog-input-time");
   // 获取时间戳
   let createTime = Date.parse(new Date());
-  console.log("createTime: ", createTime);
-  console.log("createTime: ", formatData(new Date()));
   let newtodo = {
     status: 1,
     isDel: 0,
@@ -53,8 +47,6 @@ const newSure = async () => {
   };
   let taskName = dialogInputName.value; //使用nameValue存储
   let finishTime = Date.parse(dialogInputTime.value);
-  console.log("finishTime: ", finishTime);
-  console.log("finishTime时间戳转换: ", formatData(new Date(finishTime)));
   if (inputValue(taskName) || inputValue(finishTime)) {
     return;
   } else {
@@ -66,14 +58,18 @@ const newSure = async () => {
         finishTime,
         ...newtodo,
       };
-      console.log("newtodo: ", newtodo);
-      let insertStatus = await changeNewData(newtodo);
-      if (
-        insertStatus &&
-        formatData(new Date(finishTime)) == formatData(new Date())
-      ) {
-        changeNewStatus(newtodo, conTodoUl, selectAllTodo, taskLabel[0]);
-      }
+      insertData(newtodo).then((res) => {
+        if (res.ok) {
+          if (formatData(new Date(finishTime)) == formatData(new Date())) {
+            changeNewStatus(newtodo, conTodoUl, selectAllTodo, taskLabel[0]);
+          }
+          getData().then((res) => {
+            if (res.ok) todoListDataRender(res.data);
+          });
+        } else {
+          alert("新建失败～");
+        }
+      });
       closeDialog();
     } else closeDialog();
   }
@@ -105,7 +101,7 @@ const changeAllStatus = (fragment, ul, domList) => {
       (domList.firstChild.name = "todoList"));
   fragment.appendChild(domList);
 };
-//
+//获取到今日待办项完成与未完成
 const filterStatus = (data, status) => {
   return status
     ? data.filter(
@@ -120,23 +116,20 @@ const filterStatus = (data, status) => {
       );
 };
 // 更改数据
-const changeAllData = async (status) => {
-  let res = await getData();
-  if (res.ok) {
-    let data = res.data;
-    console.log("全选的data: ", data);
-    let filterData = filterStatus(data, status);
-    console.log("filterData: ", filterData);
-    if (filterData.length !== 0 && res.ok) {
-      await updateTodayStatus(filterData);
+const changeAllData = (status) => {
+  getData().then(async (res) => {
+    if (res.ok) {
+      let filterData = filterStatus(res.data, status);
+      if (filterData.length !== 0) {
+        await updateTodayStatus(filterData);
+      }
+    } else {
+      alert("全选失败");
     }
-  } else {
-    alert("全选失败");
-  }
+  });
 };
 
 const selectAllTodoList = () => {
-  // changeAllData(conTodoUl.childNodes, false);
   changeAllData(true);
   let length = conTodoUl.childNodes.length;
   let fragmentTodo = document.createDocumentFragment();
@@ -151,7 +144,6 @@ const selectAllTodoList = () => {
 };
 
 const selectAllDoneList = () => {
-  // changeAllData(conDoneUl.childNodes, listItem, true);
   changeAllData(false);
   let length = conDoneUl.childNodes.length;
   let fragmentDone = document.createDocumentFragment();
@@ -196,76 +188,48 @@ const changeStatus = (
     ? isTodoEmpty(e, renderAllBtn, renderLabel, ul, "todoList")
     : isTodoEmpty(e, renderAllBtn, renderLabel, ul, "doneList");
 };
-// 勾选的时候修改数据
-const changeData = async (e) => {
-  let res = await getData();
-  if (res.ok) {
-    let data = res.data;
-    const item = [];
-    item.push(data.find(({ taskId }) => e.target.parentNode.id == taskId));
-    console.log("item: ", item);
-    let updateStatus = await updateTodayStatus(item);
-    return updateStatus.ok ? true : false;
-  } else {
-    alert("勾选任务项失败");
+// 今日待办项状态
+const changTodoStatus = (e) => {
+  isListUl(e)
+    ? // todo
+      changeStatus(
+        e,
+        selectAllTodo,
+        selectAllDone,
+        taskLabel[0],
+        taskLabel[1],
+        conDoneUl,
+        "今日任务已全部完成～"
+      )
+    : // done
+      changeStatus(
+        e,
+        selectAllDone,
+        selectAllTodo,
+        taskLabel[1],
+        taskLabel[0],
+        conTodoUl,
+        "今日还未完成任务～"
+      );
+};
+// 未完成状态
+const notDoneChanStatus = (e) => {
+  let allNotDone = document.querySelector(".allNotDone");
+  // 修改checkbox的name属性值
+  e.target.parentNode.firstChild.name = "doneList";
+  // 当当前日期盒子只有一条数据时 移除当前盒子 否则 移除当前待办项
+  e.target.parentNode.parentNode.childNodes.length === 1
+    ? e.target.parentNode.parentNode.parentNode.remove()
+    : e.target.parentNode.remove();
+  if (allNotDone.childNodes.length === 0) {
+    allNotDone.appendChild(emptyBox("所有任务已完成～"));
   }
 };
-const changeList = (e) => {
-  let updateSatus = changeData(e);
-  // 勾选更新数据库是否成功
-  if (updateSatus) {
-    isListUl(e)
-      ? // todo
-        changeStatus(
-          e,
-          selectAllTodo,
-          selectAllDone,
-          taskLabel[0],
-          taskLabel[1],
-          conDoneUl,
-          "今日任务已全部完成～"
-        )
-      : // done
-        changeStatus(
-          e,
-          selectAllDone,
-          selectAllTodo,
-          taskLabel[1],
-          taskLabel[0],
-          conTodoUl,
-          "今日还未完成任务～"
-        );
-  }
-};
-// 删除
-// 删除数据
-const delData = async (e) => {
-  let res = await getData();
-  if (res.ok) {
-    let data = res.data;
-    let item = data.find(({ taskId }) => e.target.parentNode.id == taskId);
-    console.log("item: ", item);
-    await moveTodoList(item);
-  } else {
-    alert("删除任务项失败");
-  }
-};
-// 今日待办项的删除
-const delList = (e) => {
-  //  判断是否为最后一项,为最后一项，在点击之后需要添加空盒子和给全选按钮加状态
-  if (e.target.parentNode.parentNode.childNodes.length === 1) {
-    isListUl(e)
-      ? isTodoLast(e, selectAllTodo, taskLabel[0], "今日任务已全部完成～")
-      : isTodoLast(e, selectAllDone, taskLabel[1], "今日还未完成任务～");
-  }
-  // delData(listItem, e);
-  delData(e);
-  e.target.parentNode.remove();
-};
-// 完成中的删除事件
-const delDoneList = (e) => {
+// 已完成的勾选事件
+const doneChanStatus = (e) => {
   let allDone = document.querySelector(".allDone");
-
+  // 修改checkbox的name属性值
+  e.target.parentNode.firstChild.name = "todoList";
   e.target.parentNode.parentNode.childNodes.length === 1
     ? e.target.parentNode.parentNode.parentNode.remove()
     : e.target.parentNode.remove();
@@ -273,19 +237,93 @@ const delDoneList = (e) => {
   if (allDone.childNodes.length === 0) {
     allDone.appendChild(emptyBox("没有任务已完成～"));
   }
-  delData(e);
 };
-// 未完成中的删除事件
-const delNotDoneList = (e) => {
+// 勾选待办项修改数据
+const changeData = (e, statusFun) => {
+  getData().then((res) => {
+    if (res.ok) {
+      const item = [];
+      item.push(
+        res.data.find(({ taskId }) => e.target.parentNode.id == taskId)
+      );
+      updateTodayStatus(item).then((res) => {
+        res.ok ? statusFun : alert("勾选任务项失败～");
+      });
+    } else {
+      alert("数据请求失败～");
+    }
+  });
+};
+// 今日待办勾选事件
+const changeList = (e) => {
+  changeData(e, changTodoStatus(e));
+};
+// 未完成的勾选事件
+const notDoneChangList = (e) => {
+  // 改变数据
+  changeData(e, notDoneChanStatus(e));
+};
+// 完成勾选事件
+const doneChangList = (e) => {
+  // 改变数据
+  changeData(e, doneChanStatus(e));
+};
+// 删除
+// 今日待办项删除状态
+const delStatus = (e) => {
+  //  判断是否为最后一项,为最后一项，在点击之后需要添加空盒子和给全选按钮加状态
+  if (e.target.parentNode.parentNode.childNodes.length === 1) {
+    isListUl(e)
+      ? isTodoLast(e, selectAllTodo, taskLabel[0], "今日任务已全部完成～")
+      : isTodoLast(e, selectAllDone, taskLabel[1], "今日还未完成任务～");
+  }
+  e.target.parentNode.remove();
+};
+// 已完成待办项删除状态
+const delDoneStatus = (e) => {
+  let allDone = document.querySelector(".allDone");
+  e.target.parentNode.parentNode.childNodes.length === 1
+    ? e.target.parentNode.parentNode.parentNode.remove()
+    : e.target.parentNode.remove();
+  // 当没有选项时添加空盒子
+  if (allDone.childNodes.length === 0) {
+    allDone.appendChild(emptyBox("没有任务已完成～"));
+  }
+};
+// 未完成待办项删除状态
+const delNotDoneStatus = (e) => {
   let allNotDone = document.querySelector(".allNotDone");
   e.target.parentNode.parentNode.childNodes.length === 1
     ? e.target.parentNode.parentNode.parentNode.remove()
     : e.target.parentNode.remove();
   // 当没有选项时添加空盒子
   if (allNotDone.childNodes.length === 0) {
-    allNotDone.appendChild(emptyBox("没有任务已完成～"));
+    allNotDone.appendChild(emptyBox("所有任务已完成～"));
   }
-  delData(e);
+};
+// 删除数据
+const delData = async (e, delFun) => {
+  let res = await getData();
+  if (res.ok) {
+    let item = res.data.find(({ taskId }) => e.target.parentNode.id == taskId);
+    moveTodoList(item).then((res) => {
+      res.ok ? delFun : alert("删除任务项失败～");
+    });
+  } else {
+    alert("数据请求失败～");
+  }
+};
+// 今日待办项的删除
+const delList = (e) => {
+  delData(e, delStatus(e));
+};
+// 完成中的删除事件
+const delDoneList = (e) => {
+  delData(e, delDoneStatus(e));
+};
+// 未完成中的删除事件
+const delNotDoneList = (e) => {
+  delData(e, delNotDoneStatus(e));
 };
 
 // 编辑
@@ -302,15 +340,14 @@ const changeEditStatus = (element, nameValue) => {
   });
 };
 // 编辑 修改数据
-const changeEditData = (data, list, nameValue, finishTime) => {
-  console.log("finishTime: ", Date.parse(finishTime));
-  console.log("data: ", data);
-  data.forEach(async (item) => {
+const changeEditData = (e, data, list, nameValue, finishTime, editFun) => {
+  data.forEach((item) => {
     if (item.taskId === list.taskId) {
-      console.log("item: ", item);
       item.taskName = nameValue;
       item.finishTime = Date.parse(finishTime);
-      await editTodoList(item);
+      editTodoList(item).then((res) => {
+        res.ok ? editFun(e, nameValue) : alert("编辑待办项失败～");
+      });
     }
   });
 };
@@ -325,8 +362,7 @@ const editSure = (e, item, data) => {
   }
   var flag = confirm("您确定修改该待办项吗?");
   if (flag) {
-    changeEditData(data, item, nameValue, finishTime);
-    changeEditStatus(e, nameValue);
+    changeEditData(e, data, item, nameValue, finishTime, changeEditStatus);
   } else {
     return;
   }
@@ -338,7 +374,9 @@ const editList = async (e) => {
   let res = await getData();
   if (res.ok) {
     let data = res.data;
+    console.log("data: ", data);
     let item = getEditData(e, data);
+    console.log("item: ", item);
     initDialog({
       text: "编辑任务项",
       nameValue: item.taskName,
@@ -351,46 +389,6 @@ const editList = async (e) => {
   }
 };
 
-// 未完成的勾选事件
-// 改变状态函数
-const notDoneChanStatus = (e, dom) => {
-  // 修改checkbox的name属性值
-  e.target.parentNode.firstChild.name = "doneList";
-  // 当当前日期盒子只有一条数据时 移除当前盒子 否则 移除当前待办项
-  e.target.parentNode.parentNode.childNodes.length === 1
-    ? e.target.parentNode.parentNode.parentNode.remove()
-    : e.target.parentNode.remove();
-  if (dom.childNodes.length === 0) {
-    dom.appendChild(emptyBox("所有任务已完成～"));
-  }
-};
-const notDoneChangList = (e) => {
-  let allNotDone = document.querySelector(".allNotDone");
-  // 改变状态
-  notDoneChanStatus(e, allNotDone);
-  // 改变数据
-  changeData(e);
-};
-
-// 已完成的勾选事件
-const doneChanStatus = (e, dom) => {
-  // 修改checkbox的name属性值
-  e.target.parentNode.firstChild.name = "todoList";
-  e.target.parentNode.parentNode.childNodes.length === 1
-    ? e.target.parentNode.parentNode.parentNode.remove()
-    : e.target.parentNode.remove();
-  // 当没有选项时添加空盒子
-  if (dom.childNodes.length === 0) {
-    dom.appendChild(emptyBox("没有任务已完成～"));
-  }
-};
-const doneChangList = (e) => {
-  let allDone = document.querySelector(".allDone");
-  // 改变状态
-  doneChanStatus(e, allDone);
-  // 改变数据
-  changeData(e);
-};
 // 选择勾线事件
 const chooseList = (listTag, e) => {
   switch (listTag) {
@@ -415,18 +413,15 @@ const chooseDel = (delTag, e) => {
       return delList(e);
     //  未完成
     case "NOTDONEDEL":
-      console.log("未完成");
       return delNotDoneList(e);
     //  已完成
     case "DONEDEL":
-      console.log("完成");
       return delDoneList(e);
     default:
       console.log("error");
   }
 };
 const todoListEvent = (listTag, delTag, e) => {
-  console.log("e: ", e);
   let nodeName = e.target.nodeName.toLocaleLowerCase();
   if (nodeName == "input" || nodeName == "label") {
     switch (e.target.id) {

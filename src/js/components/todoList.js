@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-08 16:52:16
- * @LastEditTime: 2021-07-10 08:17:55
+ * @LastEditTime: 2021-07-12 11:53:19
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/todoList.js
@@ -22,7 +22,6 @@ let selectAllDone = document.getElementById("selectAllDone");
 let taskLabel = document.getElementsByClassName("taskLabel");
 
 const todoListDataRender = (data) => {
-  console.log("data: ", data.length);
   // 创建文档片段
   let fragmentTodo = document.createDocumentFragment();
   let fragmentDone = document.createDocumentFragment();
@@ -34,7 +33,6 @@ const todoListDataRender = (data) => {
       formatData(new Date(item.finishTime)) == formatData(new Date()) &&
       !item.isDel
   );
-  console.log("filterTodoList: ", filterTodoList);
   // 根据今日待办项，创建DOM
   filterTodoList.forEach((item) => {
     const { dom, checkbox } = createTodo(item);

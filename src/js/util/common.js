@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2021-06-24 18:26:04
- * @LastEditTime: 2021-07-05 15:32:58
- * @LastEditors: your name
+ * @LastEditTime: 2021-07-12 11:51:18
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/common.js
  */
@@ -40,7 +40,7 @@ const listNotEmpty = (btnOperate, taskLabel) => {
 const objKeySort = (obj) => {
   //排序的函数
   var newkey = Object.keys(obj).sort(function (a, b) {
-    return Date.parse(b) - Date.parse(a);
+    return Number(b) - Number(a);
   });
   var newObj = {}; //创建一个新的对象，用于存放排好序的键值对
   for (var i = 0; i < newkey.length; i++) {

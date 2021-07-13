@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-25 16:22:06
- * @LastEditTime: 2021-07-12 09:39:13
+ * @LastEditTime: 2021-07-12 15:48:32
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/doneList.js
@@ -52,7 +52,6 @@ const classifyDom = (dataArr, fragment) => {
   }
 };
 const doneList = (data) => {
-  console.log("data: ", data);
   let allDone = document.querySelector(".allDone");
   allDone.innerHTML = "";
   let fragmentAllTask = document.createDocumentFragment();

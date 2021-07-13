@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-17 10:17:57
- * @LastEditTime: 2021-07-10 10:36:45
+ * @LastEditTime: 2021-07-12 17:27:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/navSwitch.js
@@ -10,14 +10,14 @@
 import { todoListDataRender } from "../components/todoList";
 import doneList from "../components/doneList";
 import notDoneList from "../components/notDoneList";
-import recyclLis from "../components/recyclList";
+import { recycleRender } from "../components/recycleList";
 import { getData } from "../../http";
 
 const navSwitch = () => {
   var topNav = document.getElementById("top-nav");
   let liItem = topNav.getElementsByTagName("li");
   let boxItem = document.getElementsByClassName("con-box");
-  let listArr = [todoListDataRender, doneList, notDoneList, recyclLis];
+  let listArr = [todoListDataRender, doneList, notDoneList, recycleRender];
   boxItem[0].classList.add("current");
   liItem[0].className = "nav-li-current";
   for (var i = 0; i < liItem.length; i++) {

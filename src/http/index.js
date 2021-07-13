@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-09 11:44:50
- * @LastEditTime: 2021-07-11 01:38:24
+ * @LastEditTime: 2021-07-12 15:05:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/http/index.js
@@ -50,7 +50,6 @@ const updateTodayStatus = async (data) => {
     axios
       .post("/updateTodayStatus", data, {
         headers: {
-          // "Content-Type": "application/json",
           "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
         },
       })
@@ -71,7 +70,6 @@ const moveTodoList = async (data) => {
     axios
       .post("/moveTodoList", data, {
         headers: {
-          // "Content-Type": "application/json",
           "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
         },
       })
