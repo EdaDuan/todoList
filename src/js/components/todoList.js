@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-08 16:52:16
- * @LastEditTime: 2021-07-12 11:53:19
+ * @LastEditTime: 2021-07-18 11:12:27
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/todoList.js
@@ -50,20 +50,28 @@ const todoListDataRender = (data) => {
     : (listNotEmpty(selectAllDone, taskLabel[1]),
       conDoneUl.appendChild(fragmentDone));
 };
-const todoList = (data) => {
+const todoList = (data, isLogin) => {
   // 事件代理添加点击事件
   conTodoUl.addEventListener(
     "click",
-    todoListEvent.bind(this, "TODO", "TODODEL"),
+    todoListEvent.bind(this, "TODO", "TODODEL", isLogin),
     false
   );
   conDoneUl.addEventListener(
     "click",
-    todoListEvent.bind(this, "TODO", "TODODEL"),
+    todoListEvent.bind(this, "TODO", "TODODEL", isLogin),
     false
   );
-  selectAllTodo.addEventListener("click", selectAllTodoList, false);
-  selectAllDone.addEventListener("click", selectAllDoneList, false);
+  selectAllTodo.addEventListener(
+    "click",
+    selectAllTodoList.bind(this, isLogin),
+    false
+  );
+  selectAllDone.addEventListener(
+    "click",
+    selectAllDoneList.bind(this, isLogin),
+    false
+  );
   todoListDataRender(data);
 };
 export { todoList, todoListDataRender };

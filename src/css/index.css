@@ -29,9 +29,40 @@
   background-color: white;
   color: #ff8400;
 }
-
+#userMsg {
+  position: absolute;
+  width: 8rem;
+  height: 2rem;
+  right: 0;
+  margin-top: 1rem;
+  color: #ff8400;
+  font-size: 1rem;
+  /* background: #999; */
+}
+#userMsg span {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#loginBtn {
+  float: right;
+  width: 6rem;
+  height: 2rem;
+  right: 0;
+  border: none;
+  outline: none;
+  color: #ff8400;
+  background: transparent;
+  font-size: 1rem;
+  cursor: pointer;
+}
 /* 内容部分 */
 .con-box {
+  top: 4rem;
   display: none;
 }
 .current {
@@ -236,43 +267,76 @@
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 9999;
 }
+
+.login-register-dialog,
 .dialog-con {
   position: relative;
-  width: 18rem;
-  height: 15.625rem;
+  width: 24rem;
+  height: 18rem;
   margin: 0 auto;
-  padding: 1.25rem;
   top: 50%;
   transform: translateY(-50%);
   background: #eee;
+}
+.dialog-con {
+  padding: 1.25rem;
+}
+.login-register-dialog {
+  padding-bottom: 1.25rem;
 }
 .dialog-tip {
   font-size: 1.25rem;
   color: #ff8400;
   font-weight: 700;
 }
-.dialog-input {
-  height: 3.75rem;
-  line-height: 3.75rem;
+.dialog-input,
+.login-input,
+.register-input {
+  height: 3.25rem;
+  line-height: 3rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
-  margin: 1.25rem 0;
+  margin: 1rem 0;
+  /* background-color: #fff; */
 }
-.dialog-input label {
-  width: 8.75rem;
+.login-input label,
+.dialog-input label,
+.register-input label {
+  width: 5rem;
   text-align: right;
   font-size: 1rem;
 }
-.dialog-input input {
-  width: 15.625rem;
+.login-input input,
+.dialog-input input,
+.register-input input {
+  width: 14rem;
   height: 1.875rem;
-  margin-top: 0.8rem;
+  margin-top: 0.6rem;
   outline: none;
 }
-.dialog-input-btn {
+.dialog-input-btn,
+.login-input-btn,
+.register-input-btn {
   text-align: right;
+  /* background: #fff; */
 }
-.dialog-input-btn button {
-  margin-right: 0.75rem;
+.dialog-input-btn button,
+.login-input-btn button,
+.register-input-btn button {
+  margin-right: 1rem;
+}
+
+.dialog-login,
+.dialog-register {
+  width: 50%;
+  height: 3rem;
+  font-size: 1.25rem;
+  border: none;
+  outline: none;
+  background: #fff;
+  color: #ff8400;
+}
+.dialog-login {
+  border-right: 2px solid #eee;
 }

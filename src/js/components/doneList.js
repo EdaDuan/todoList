@@ -26,12 +26,12 @@ const createSpan = (dom, data) => {
   dom.appendChild(span);
 };
 // 创建ul
-const createUl = (dom) => {
+const createUl = (dom, isLogin) => {
   let ul = document.createElement("ul");
   ul.setAttribute("class", "doneUl");
   ul.addEventListener(
     "click",
-    todoListEvent.bind(this, "DONE", "DONEDEL"),
+    todoListEvent.bind(this, "DONE", "DONEDEL", isLogin),
     false
   );
   dom.appendChild(ul);
@@ -44,14 +44,14 @@ const createDom = (obj, ul) => {
     addCheckName(item, dom, checkbox, ul);
   });
 };
-const classifyDom = (dataArr, fragment) => {
+const classifyDom = (dataArr, fragment, isLogin) => {
   for (let key in dataArr) {
     let div = createDiv(fragment); //创建DIV，挂载到fragment上
     createSpan(div, formatData(new Date(Number(key)))); //在DIV上添加span 显示日期
-    createDom(dataArr[key], createUl(div)); //创建UL 将当前日期下的所有todoList添加到当前日期的ul下
+    createDom(dataArr[key], createUl(div, isLogin)); //创建UL 将当前日期下的所有todoList添加到当前日期的ul下
   }
 };
-const doneList = (data) => {
+const doneList = (data, isLogin) => {
   let allDone = document.querySelector(".allDone");
   allDone.innerHTML = "";
   let fragmentAllTask = document.createDocumentFragment();
@@ -62,7 +62,7 @@ const doneList = (data) => {
   // 获取分类后的数组
   let classifyArr = classifyTime(filterallDone);
   // 获取分类后的DOM 传入排好序的数组
-  classifyDom(objKeySort(classifyArr), fragmentAllTask);
+  classifyDom(objKeySort(classifyArr), fragmentAllTask, isLogin);
   fragmentAllTask.childNodes.length === 0
     ? allDone.appendChild(emptyBox("没有任务已完成～"))
     : allDone.appendChild(fragmentAllTask);

@@ -1,16 +1,59 @@
 /*
  * @Author: your name
  * @Date: 2021-07-09 11:44:50
- * @LastEditTime: 2021-07-12 15:05:29
+ * @LastEditTime: 2021-07-19 01:03:27
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/http/index.js
  */
 import axios from "axios";
+import CookieUtil from "../js/util/cookieUtils";
+axios.defaults.headers["Authorization"] = `${CookieUtil.get("ses_token")}`;
 axios.defaults.baseURL = "http://127.0.0.1:3000";
+// 登陆
+const userLogin = async (data) => {
+  const resPromise = await new Promise((resolve, reject) => {
+    //请求数据函数
+    axios
+      .post("/userLogin", data, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+        },
+      })
+      .then((res) => {
+        // 数据请求成功
+        return resolve(res.data);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+  return resPromise;
+};
+
+// 注册
+const userRegister = async (data) => {
+  const resPromise = await new Promise((resolve, reject) => {
+    //请求数据函数
+    axios
+      .post("/userRegister", data, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+        },
+      })
+      .then((res) => {
+        // 数据请求成功
+        return resolve(res.data);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+  return resPromise;
+};
 // 获取todoList的数据
 const getData = async () => {
-  let resPromise = await new Promise((resolve, reject) => {
+  const resPromise = await new Promise((resolve, reject) => {
     axios
       .get("/getTodoList")
       .then((res) => {
@@ -24,7 +67,7 @@ const getData = async () => {
 };
 // 新增待办项
 const insertData = async (newtodo) => {
-  let resPromise = await new Promise((resolve, reject) => {
+  const resPromise = await new Promise((resolve, reject) => {
     //请求数据函数
     axios
       .post("/insert", newtodo, {
@@ -45,8 +88,7 @@ const insertData = async (newtodo) => {
 };
 // 修改status
 const updateTodayStatus = async (data) => {
-  let resPromise = await new Promise((resolve, reject) => {
-    //请求数据函数
+  const resPromise = await new Promise((resolve, reject) => {
     axios
       .post("/updateTodayStatus", data, {
         headers: {
@@ -54,7 +96,6 @@ const updateTodayStatus = async (data) => {
         },
       })
       .then((res) => {
-        // 数据请求成功
         return resolve(res.data);
       })
       .catch((err) => {
@@ -65,7 +106,7 @@ const updateTodayStatus = async (data) => {
 };
 // 假删除
 const moveTodoList = async (data) => {
-  let resPromise = await new Promise((resolve, reject) => {
+  const resPromise = await new Promise((resolve, reject) => {
     //请求数据函数
     axios
       .post("/moveTodoList", data, {
@@ -85,7 +126,7 @@ const moveTodoList = async (data) => {
 };
 // 编辑
 const editTodoList = async (data) => {
-  let resPromise = await new Promise((resolve, reject) => {
+  const resPromise = await new Promise((resolve, reject) => {
     axios
       .post("/editTodoList", data, {
         headers: {
@@ -103,7 +144,7 @@ const editTodoList = async (data) => {
 };
 // 彻底删除
 const deleteTodoList = async (data) => {
-  let resPromise = await new Promise((resolve, reject) => {
+  const resPromise = await new Promise((resolve, reject) => {
     axios
       .post("/deleteTodoList", data, {
         headers: {
@@ -120,6 +161,8 @@ const deleteTodoList = async (data) => {
   return resPromise;
 };
 export {
+  userLogin,
+  userRegister,
   getData,
   insertData,
   updateTodayStatus,
