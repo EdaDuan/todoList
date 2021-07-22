@@ -1,11 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 14:29:08
- * @LastEditTime: 2021-07-15 15:52:34
+ * @LastEditTime: 2021-07-21 10:56:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/loginDialog.js
  */
+// 引入校验规则
+import { checkName, checkAccount, checkPw, getCheckRes } from "../util/common";
 // 创建div
 const createDiv = (dom, className) => {
   let div = document.createElement("div");
@@ -26,6 +28,7 @@ const createInput = (dom, className, type) => {
   input.setAttribute("type", type);
   input.setAttribute("value", "");
   dom.appendChild(input);
+  return input;
 };
 // 创建button
 const createBtn = (dom, className, text) => {
@@ -57,22 +60,35 @@ const createLogin = (dom, login, cancel) => {
     cancel
   );
 };
+
 // 创建注册
 const createRegister = (dom, register, cancel) => {
   let registerInputName = createDiv(dom, "register-input");
   createLabel(registerInputName, "用户名：");
-  createInput(registerInputName, "register-username", "text");
+  createInput(registerInputName, "register-username", "text").addEventListener(
+    "blur",
+    checkName.bind(this)
+  );
   let registerInputAccount = createDiv(dom, "register-input");
   createLabel(registerInputAccount, "账号：");
-  createInput(registerInputAccount, "register-account", "text");
+  createInput(
+    registerInputAccount,
+    "register-account",
+    "text"
+  ).addEventListener("blur", checkAccount.bind(this));
   let registerInputPw = createDiv(dom, "register-input");
   createLabel(registerInputPw, "密码：");
-  createInput(registerInputPw, "register-password", "password");
+  createInput(
+    registerInputPw,
+    "register-password",
+    "password"
+  ).addEventListener("blur", checkPw.bind(this));
   let loginInputBtn = createDiv(dom, "register-input-btn");
   createBtn(loginInputBtn, "register-sure", "确定").addEventListener(
     "click",
     register.bind(
       this,
+      getCheckRes.bind(this),
       document.querySelector("#register-username"),
       document.querySelector("#register-account"),
       document.querySelector("#register-password")

@@ -1,13 +1,21 @@
 /*
  * @Author: your name
  * @Date: 2021-06-30 18:57:26
- * @LastEditTime: 2021-07-19 01:04:11
+ * @LastEditTime: 2021-07-22 11:45:39
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/recycleList.js
  */
 import { emptyBox } from "../util/common";
-import { deleteTodoList, moveTodoList } from "../../http";
+import { recoverRecycleDB, clearRecycleDB } from "../util/operateDB";
+import {
+  recoverRecycleLocal,
+  clearRecycleLocal,
+  clearAllDateLocal,
+} from "../util/operateLocal";
+import { cacheData } from "../util/storeData";
+let cache = cacheData();
+import Toast from "../util/toast";
 // 修改状态
 const changeStatus = (e) => {
   let ulNode = e.target.parentNode.parentNode;
@@ -17,46 +25,24 @@ const changeStatus = (e) => {
     : ulNode.removeChild(e.target.parentNode);
 };
 // 待办项恢复
-const recoverRecycle = (isLogin, data, e) => {
-  const item = data.find(({ taskId }) => e.target.parentNode.id == taskId);
+const recoverRecycle = (isLogin, e) => {
   if (isLogin) {
-    moveTodoList(item).then((res) => {
-      res.ok ? changeStatus(e) : alert("恢复失败～");
-    });
+    recoverRecycleDB(e, changeStatus);
   } else {
-    let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-      ? JSON.parse(localStorage.getItem("todoList"))
-      : [];
-    const item = localTodoList.find(
-      ({ taskId }) => e.target.parentNode.id == taskId
-    );
-    item.isDel = 0;
-    changeStatus(e);
-    localStorage.setItem("todoList", JSON.stringify(localTodoList));
+    recoverRecycleLocal(e, changeStatus);
   }
 };
 // 删除回收站
-const clearRecycle = (isLogin, data, e) => {
+const clearRecycle = async (isLogin, e) => {
   if (isLogin) {
+    let catcheData = await cache.get("GET_TODO");
     let item = [];
     item.push(
-      data.find((item) => item.taskId == Number(e.target.parentNode.id))
+      catcheData.find((item) => item.taskId == Number(e.target.parentNode.id))
     );
-    deleteTodoList(item).then((res) => {
-      res.ok ? changeStatus(e) : alert("待办项删除失败～");
-    });
+    clearRecycleDB(item, e, changeStatus);
   } else {
-    let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-      ? JSON.parse(localStorage.getItem("todoList"))
-      : [];
-    localTodoList.splice(
-      localTodoList.findIndex(
-        (item) => item.taskId == Number(e.target.parentNode.id)
-      ),
-      1
-    );
-    changeStatus(e);
-    localStorage.setItem("todoList", JSON.stringify(localTodoList));
+    clearRecycleLocal(e, changeStatus);
   }
 };
 // 清空全部样式
@@ -64,62 +50,41 @@ const clearAllStatus = (dom) => {
   dom.lastChild.innerHTML = "";
   dom.lastChild.appendChild(emptyBox("回收站为空～"));
 };
-const clearAllDate = (list, dom) => {
-  if (dom.lastChild.firstChild.tagName == "LI") {
-    var flag = confirm("您确定清空回收站吗?"); //弹出确认框
-    if (flag) {
-      deleteTodoList(list).then((res) => {
-        res.ok ? clearAllStatus(dom) : alert("回收站清空失败～");
-      });
-    } else {
-      console.log("操作取消");
-    }
-  } else {
-    alert("当前回收站为空～");
-  }
-};
-const clearAllDateLocal = (list, dom) => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
-  if (dom.lastChild.firstChild.tagName == "LI") {
-    var flag = confirm("您确定清空回收站吗?"); //弹出确认框
-    if (flag) {
-      list.map((listItem) => {
-        localTodoList.splice(
-          localTodoList.findIndex((item) => item.taskId === listItem.taskId),
-          1
-        );
-      });
-      clearAllStatus(dom);
-      localStorage.setItem("todoList", JSON.stringify(localTodoList));
-    }
-  } else {
-    alert("当前回收站为空～");
-  }
-};
 // 清空回收站
-const clearAllRecycle = (isLogin, list, dom) => {
-  isLogin ? clearAllDate(list, dom) : clearAllDateLocal(list, dom);
+const clearAllRecycle = async (isLogin, dom) => {
+  if (dom.lastChild.firstChild.tagName == "LI") {
+    var flag = confirm("您确定清空回收站吗?"); //弹出确认框
+    if (flag) {
+      if (isLogin) {
+        let catcheData = await cache.get("GET_TODO");
+        const filterDelList = catcheData.filter((item) => item.isDel);
+        clearRecycleDB(filterDelList, dom, clearAllStatus);
+      } else {
+        clearAllDateLocal(dom, clearAllStatus);
+      }
+    }
+  } else {
+    Toast.show("当前回收站为空");
+  }
 };
-const recycleEvent = (isLogin, data, e) => {
+const recycleEvent = (isLogin, e) => {
   if (e.target.nodeName.toLocaleLowerCase() == "input") {
     switch (e.target.id) {
       case "recover":
-        recoverRecycle.call(this, isLogin, data, e);
+        recoverRecycle.call(this, isLogin, e);
         break;
       case "remove":
-        clearRecycle.call(this, isLogin, data, e);
+        clearRecycle.call(this, isLogin, e);
         break;
       default:
     }
   }
 };
 // 创建ul
-const createUl = (isLogin, dom, className, data) => {
+const createUl = (isLogin, dom, className) => {
   let ul = document.createElement("ul");
   ul.setAttribute("class", className);
-  ul.addEventListener("click", recycleEvent.bind(this, isLogin, data), false);
+  ul.addEventListener("click", recycleEvent.bind(this, isLogin), false);
   dom.appendChild(ul);
   return ul;
 };
@@ -172,21 +137,19 @@ const recycleRender = (data, isLogin) => {
   if (recycleUl.childNodes.length === 0)
     recycleUl.appendChild(emptyBox("回收站为空～"));
 };
-const recycleList = (data, isLogin) => {
+const recycleList = (isLogin) => {
   let allRecycle = document.querySelector(".allRecycle");
-  // 获取所以删除的数据
-  const filterDelList = data.filter((item) => item.isDel);
   let clearAllbtn = document.createElement("input");
   clearAllbtn.setAttribute("class", "clearAll");
   clearAllbtn.setAttribute("type", "button");
   clearAllbtn.addEventListener(
     "click",
-    clearAllRecycle.bind(this, isLogin, filterDelList, allRecycle),
+    clearAllRecycle.bind(this, isLogin, allRecycle),
     false
   );
   clearAllbtn.setAttribute("value", "清空");
   allRecycle.appendChild(clearAllbtn);
   // 创建ul
-  createUl(isLogin, allRecycle, "recycleUl", data);
+  createUl(isLogin, allRecycle, "recycleUl");
 };
 export { recycleList, recycleRender };

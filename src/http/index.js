@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-09 11:44:50
- * @LastEditTime: 2021-07-19 01:03:27
+ * @LastEditTime: 2021-07-22 11:22:48
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/http/index.js
@@ -52,7 +52,7 @@ const userRegister = async (data) => {
   return resPromise;
 };
 // 获取todoList的数据
-const getData = async () => {
+const getTodoList = async () => {
   const resPromise = await new Promise((resolve, reject) => {
     axios
       .get("/getTodoList")
@@ -66,11 +66,11 @@ const getData = async () => {
   return resPromise;
 };
 // 新增待办项
-const insertData = async (newtodo) => {
+const insertTodoList = async (newtodo) => {
   const resPromise = await new Promise((resolve, reject) => {
     //请求数据函数
     axios
-      .post("/insert", newtodo, {
+      .post("/insertTodoList", newtodo, {
         headers: {
           // "Content-Type": "application/json",
           "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
@@ -87,10 +87,10 @@ const insertData = async (newtodo) => {
   return resPromise;
 };
 // 修改status
-const updateTodayStatus = async (data) => {
+const updateTodoStatus = async (data) => {
   const resPromise = await new Promise((resolve, reject) => {
     axios
-      .post("/updateTodayStatus", data, {
+      .post("/updateTodoStatus", data, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
         },
@@ -163,9 +163,9 @@ const deleteTodoList = async (data) => {
 export {
   userLogin,
   userRegister,
-  getData,
-  insertData,
-  updateTodayStatus,
+  getTodoList,
+  insertTodoList,
+  updateTodoStatus,
   moveTodoList,
   editTodoList,
   deleteTodoList,

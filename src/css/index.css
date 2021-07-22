@@ -340,3 +340,15 @@
 .dialog-login {
   border-right: 2px solid #eee;
 }
+/* toast提示 */
+.toast-wrap {
+  position: absolute;
+  width: 20rem;
+  height: 4rem;
+  line-height: 4rem;
+  text-align: center;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+}

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 17:21:11
- * @LastEditTime: 2021-07-19 00:06:53
+ * @LastEditTime: 2021-07-22 09:32:06
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/login.js
@@ -13,10 +13,11 @@ import {
 } from "../components/loginDialog";
 import { userLogin, userRegister } from "../../http";
 import CookieUtil from "../util/cookieUtils";
+import Toast from "../util/toast";
 // 登陆按钮的DOM
 let loginBtn = document.querySelector("#loginBtn");
 let userMsg = document.querySelector("#userMsg");
-// DOM的修改
+// DOM的修改。登陆样式的修改
 const loginStatus = () => {
   let useMsgCookie =
     CookieUtil.get("user_msg") && JSON.parse(CookieUtil.get("user_msg"));
@@ -35,15 +36,20 @@ const onCLick = () => {
 const changClick = () => {
   loginBtn.addEventListener("click", onCLick);
 };
+// 询问用户是否需要将本地数据同步到当前登陆账户
 // 确认登陆
 const login = (accountDom, pwdDom) => {
   let localTodoList = JSON.parse(localStorage.getItem("todoList"))
     ? JSON.parse(localStorage.getItem("todoList"))
     : [];
+  let tag = "";
+  let flag = confirm("是否同步本地数据?");
+  flag ? (tag = true) : (tag = false);
   userLogin({
     account: accountDom.value,
     pwd: pwdDom.value,
     localTodoList,
+    tag,
   }).then((res) => {
     if (res.ok) {
       CookieUtil.set("ses_token", res.ses_token);
@@ -53,31 +59,34 @@ const login = (accountDom, pwdDom) => {
           name: res.data[0].userName,
         })
       );
+      // 登陆成功更新页面的数据
       loginStatus();
       changClick();
       closeLogin();
       location.reload();
     } else {
-      alert(res.error);
+      Toast.error(res.error);
     }
   });
 };
 // 确认注册方法
-const register = (nameDom, accountDom, pwdDom) => {
-  userRegister({
-    userName: nameDom.value,
-    account: accountDom.value,
-    pwd: pwdDom.value,
-  }).then((res) => {
-    if (res.ok) {
-      alert("注册成功，请登录");
-      nameDom.value = "";
-      accountDom.value = "";
-      pwdDom.value = "";
-    } else {
-      alert(res.error);
-    }
-  });
+const register = (regRes, nameDom, accountDom, pwdDom) => {
+  if (regRes()) {
+    userRegister({
+      userName: nameDom.value,
+      account: accountDom.value,
+      pwd: pwdDom.value,
+    }).then((res) => {
+      if (res.ok) {
+        Toast.show("注册成功，请登录");
+        nameDom.value = "";
+        accountDom.value = "";
+        pwdDom.value = "";
+      } else {
+        Toast.error(res.error);
+      }
+    });
+  }
 };
 // 注销账号
 const logout = () => {
@@ -87,6 +96,7 @@ const logout = () => {
     CookieUtil.unset("user_msg");
     loginStatus();
     changClick();
+    location.reload();
   }
 };
 // 登陆弹窗

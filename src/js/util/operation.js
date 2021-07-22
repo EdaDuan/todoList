@@ -7,19 +7,26 @@ import {
   emptyBox,
 } from "./common";
 // 弹窗
-import { initDialog, popupDialog, closeDialog } from "./dialog";
+import { initDialog, popupDialog, closeDialog } from "../components/dialog";
 import formatData from "../util/formate";
 import { createTodo, addCheckName } from "../components/createTodo";
-import {
-  insertData,
-  getData,
-  updateTodayStatus,
-  moveTodoList,
-  editTodoList,
-} from "../../http";
-import { todoListDataRender } from "../components/todoList";
 import CookieUtil from "./cookieUtils";
-
+import {
+  newDataDB,
+  changeAllDataDB,
+  changDataDB,
+  delDataDB,
+  editDataDB,
+} from "./operateDB";
+import {
+  newDataLocal,
+  changeAllDataLocal,
+  changDataLocal,
+  delDataLocal,
+  editDataLocal,
+} from "./operateLocal";
+import { cacheData } from "./storeData";
+let cache = cacheData();
 let conTodoUl = document.querySelector(".con-todo-ul");
 let conDoneUl = document.querySelector(".con-done-ul");
 let selectAllTodo = document.getElementById("selectAllTodo");
@@ -36,34 +43,7 @@ const changeNewStatus = (newtodo, domUl, domInput, domLabel) => {
   }
   addCheckName(newtodo, dom, checkbox, domUl);
 };
-const changeNewData = (newtodo, finishTime) => {
-  insertData(newtodo).then((res) => {
-    if (res.ok) {
-      if (formatData(new Date(finishTime)) == formatData(new Date())) {
-        changeNewStatus(newtodo, conTodoUl, selectAllTodo, taskLabel[0]);
-      }
-      getData().then((res) => {
-        if (res.ok) todoListDataRender(res.data);
-      });
-    } else {
-      alert("新建失败～");
-    }
-  });
-};
-const changeNewDataLocal = (newtodo, data, finishTime) => {
-  let taskId = data[data.length - 1].taskId + 1;
-  newtodo = {
-    taskId,
-    ...newtodo,
-  };
-  data.push(newtodo);
-  if (formatData(new Date(finishTime)) == formatData(new Date())) {
-    changeNewStatus(newtodo, conTodoUl, selectAllTodo, taskLabel[0]);
-  }
-  localStorage.setItem("todoList", JSON.stringify(data));
-};
-
-const newSure = async () => {
+const newSure = () => {
   let dialogInputName = document.querySelector("#dialog-input-name");
   let dialogInputTime = document.querySelector("#dialog-input-time");
   // 获取时间戳
@@ -80,9 +60,6 @@ const newSure = async () => {
     let flag = confirm("您确定添加该待办项吗?"); //弹出确认框
     if (flag) {
       let useMsgCookie = CookieUtil.get("ses_token");
-      let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-        ? JSON.parse(localStorage.getItem("todoList"))
-        : [];
       newtodo = {
         taskName,
         createTime,
@@ -90,8 +67,22 @@ const newSure = async () => {
         ...newtodo,
       };
       useMsgCookie
-        ? changeNewData(newtodo, finishTime)
-        : changeNewDataLocal(newtodo, localTodoList, finishTime);
+        ? newDataDB(
+            newtodo,
+            finishTime,
+            conTodoUl,
+            selectAllTodo,
+            taskLabel[0],
+            changeNewStatus
+          )
+        : newDataLocal(
+            newtodo,
+            finishTime,
+            conTodoUl,
+            selectAllTodo,
+            taskLabel[0],
+            changeNewStatus
+          );
       closeDialog();
     } else closeDialog();
   }
@@ -121,50 +112,6 @@ const changeAllStatus = (fragment, ul, domList) => {
     : ((domList.firstChild.checked = false),
       (domList.firstChild.name = "todoList"));
   fragment.appendChild(domList);
-};
-//获取到今日待办项完成与未完成
-const filterStatus = (data, status) => {
-  return status
-    ? data.filter(
-        (item) =>
-          item.status === 1 &&
-          formatData(new Date(item.finishTime)) == formatData(new Date())
-      )
-    : data.filter(
-        (item) =>
-          item.status === 0 &&
-          formatData(new Date(item.finishTime)) == formatData(new Date())
-      );
-};
-//获取到今日待办项完成与未完成
-const filterStatusLocal = (data, status) => {
-  data.map((item) => {
-    if (formatData(new Date(item.finishTime)) == formatData(new Date())) {
-      status ? (item.status = 0) : (item.status = 1);
-    }
-  });
-  return data;
-};
-// 全选时更改数据库数据
-const changeAllDataDB = (status) => {
-  getData().then(async (res) => {
-    if (res.ok) {
-      let filterData = filterStatus(res.data, status);
-      if (filterData.length !== 0) {
-        await updateTodayStatus(filterData);
-      }
-    } else {
-      alert("全选失败");
-    }
-  });
-};
-// 全选是修改本地数据
-const changeAllDataLocal = () => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
-  let filterData = filterStatusLocal(localTodoList, status);
-  localStorage.setItem("todoList", JSON.stringify(filterData));
 };
 // 更改数据
 const changeAllData = (status, isLogin) => {
@@ -283,39 +230,6 @@ const doneChanStatus = (e) => {
     allDone.appendChild(emptyBox("没有任务已完成～"));
   }
 };
-// 勾选待办项修改数据库数据
-const changDataDB = (e, statusFun) => {
-  getData().then((res) => {
-    if (res.ok) {
-      const item = [];
-      item.push(
-        res.data.find(({ taskId }) => e.target.parentNode.id == taskId)
-      );
-      updateTodayStatus(item).then((res) => {
-        res.ok ? statusFun(e) : alert("勾选任务项失败1～");
-      });
-    } else {
-      alert("数据请求失败～");
-    }
-  });
-};
-// 勾选待办项修改本地数据
-const changDataLocal = (e, statusFun) => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
-  const item = localTodoList.find(
-    ({ taskId }) => e.target.parentNode.id == taskId
-  );
-  if (item) {
-    item.status ? (item.status = 0) : (item.status = 1);
-    statusFun(e);
-    localStorage.setItem("todoList", JSON.stringify(localTodoList));
-  } else {
-    e.target.parentNode.firstChild.checked = true;
-    alert("勾选任务项失败～");
-  }
-};
 // 勾选待办项修改数据
 const changeData = (isLogin, e, statusFun) => {
   if (isLogin) {
@@ -371,32 +285,6 @@ const delNotDoneStatus = (e) => {
     allNotDone.appendChild(emptyBox("所有任务已完成～"));
   }
 };
-// 删除数据库数据
-const delDataDB = (e, delFun) => {
-  getData().then((res) => {
-    if (res.ok) {
-      let item = res.data.find(
-        ({ taskId }) => e.target.parentNode.id == taskId
-      );
-      moveTodoList(item).then((res) => {
-        res.ok ? delFun : alert("删除任务项失败～");
-      });
-    } else {
-      alert("数据请求失败～");
-    }
-  });
-};
-// 删除本地数据
-const delDataLocal = (e, delFun) => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
-  const item = localTodoList.find(
-    ({ taskId }) => e.target.parentNode.id == taskId
-  );
-  item.isDel = 1;
-  localStorage.setItem("todoList", JSON.stringify(localTodoList));
-};
 // 删除数据
 const delData = (isLogin, e, delFun) => {
   if (isLogin) {
@@ -407,15 +295,15 @@ const delData = (isLogin, e, delFun) => {
 };
 // 今日待办项的删除
 const delList = (isLogin, e) => {
-  delData(isLogin, e, delStatus(e));
+  delData(isLogin, e, delStatus);
 };
 // 完成中的删除事件
 const delDoneList = (isLogin, e) => {
-  delData(isLogin, e, delDoneStatus(e));
+  delData(isLogin, e, delDoneStatus);
 };
 // 未完成中的删除事件
 const delNotDoneList = (isLogin, e) => {
-  delData(isLogin, e, delNotDoneStatus(e));
+  delData(isLogin, e, delNotDoneStatus);
 };
 
 // 编辑
@@ -433,28 +321,6 @@ const changeEditStatus = (element, nameValue) => {
     }
   });
 };
-// 编辑 修改数据
-const changeEditData = (e, data, list, nameValue, finishTime, editFun) => {
-  data.forEach((item) => {
-    if (item.taskId === list.taskId) {
-      item.taskName = nameValue;
-      item.finishTime = Date.parse(finishTime);
-      editTodoList(item).then((res) => {
-        res.ok ? editFun(e, nameValue) : alert("编辑待办项失败～");
-      });
-    }
-  });
-};
-const changeEditDataLocal = (e, data, list, nameValue, finishTime, editFun) => {
-  data.forEach((item) => {
-    if (item.taskId === list.taskId) {
-      item.taskName = nameValue;
-      item.finishTime = Date.parse(finishTime);
-      localStorage.setItem("todoList", JSON.stringify(data));
-      editFun(e, nameValue);
-    }
-  });
-};
 // 编辑确认事件判断
 const editSure = (isLogin, e, item, data) => {
   let dialogInputName = document.querySelector("#dialog-input-name");
@@ -467,15 +333,8 @@ const editSure = (isLogin, e, item, data) => {
   var flag = confirm("您确定修改该待办项吗?");
   if (flag) {
     isLogin
-      ? changeEditData(e, data, item, nameValue, finishTime, changeEditStatus)
-      : changeEditDataLocal(
-          e,
-          data,
-          item,
-          nameValue,
-          finishTime,
-          changeEditStatus
-        );
+      ? editDataDB(e, item, nameValue, finishTime, changeEditStatus)
+      : editDataLocal(e, item, data, nameValue, finishTime, changeEditStatus);
   } else return;
   closeDialog();
 };
@@ -485,18 +344,14 @@ const editList = async (isLogin, e) => {
   let data = [];
   let item = {};
   if (isLogin) {
-    getData().then((res) => {
-      res.ok
-        ? ((data = res.data),
-          (item = getEditData(e, data)),
-          initDialog({
-            text: "编辑任务项",
-            nameValue: item.taskName,
-            timeValue: formatData(new Date(item.finishTime)),
-            okEvent: editSure.bind(this, isLogin, e, item, data),
-          }))
-        : alert("请求出错～");
-    });
+    let catcheData = await cache.get("GET_TODO");
+    (item = getEditData(e, catcheData)),
+      initDialog({
+        text: "编辑任务项",
+        nameValue: item.taskName,
+        timeValue: formatData(new Date(item.finishTime)),
+        okEvent: editSure.bind(this, isLogin, e, item),
+      });
   } else {
     data = JSON.parse(localStorage.getItem("todoList"))
       ? JSON.parse(localStorage.getItem("todoList"))
@@ -509,7 +364,6 @@ const editList = async (isLogin, e) => {
       okEvent: editSure.bind(this, isLogin, e, item, data),
     });
   }
-
   popupDialog();
 };
 
@@ -550,11 +404,9 @@ const todoListEvent = (listTag, delTag, isLogin, e) => {
   if (nodeName == "input" || nodeName == "label") {
     switch (e.target.id) {
       case "todoCheck":
-        // e.preventDefault();
         chooseList(listTag, isLogin, e);
         break;
       case "todoDel":
-        // delList(e);
         chooseDel(delTag, isLogin, e);
         break;
       case "todoEdit":
@@ -564,5 +416,4 @@ const todoListEvent = (listTag, delTag, isLogin, e) => {
     }
   }
 };
-
 export { newTodoList, selectAllTodoList, selectAllDoneList, todoListEvent };
