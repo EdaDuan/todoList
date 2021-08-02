@@ -1,72 +1,17 @@
 /*
  * @Author: your name
  * @Date: 2021-06-30 18:57:26
- * @LastEditTime: 2021-07-22 11:45:39
+ * @LastEditTime: 2021-07-29 17:03:42
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/recycleList.js
  */
 import { emptyBox } from "../util/common";
-import { recoverRecycleDB, clearRecycleDB } from "../util/operateDB";
 import {
-  recoverRecycleLocal,
-  clearRecycleLocal,
-  clearAllDateLocal,
-} from "../util/operateLocal";
-import { cacheData } from "../util/storeData";
-let cache = cacheData();
-import Toast from "../util/toast";
-// 修改状态
-const changeStatus = (e) => {
-  let ulNode = e.target.parentNode.parentNode;
-  ulNode.childNodes.length === 1
-    ? (ulNode.removeChild(e.target.parentNode),
-      ulNode.appendChild(emptyBox("回收站为空～")))
-    : ulNode.removeChild(e.target.parentNode);
-};
-// 待办项恢复
-const recoverRecycle = (isLogin, e) => {
-  if (isLogin) {
-    recoverRecycleDB(e, changeStatus);
-  } else {
-    recoverRecycleLocal(e, changeStatus);
-  }
-};
-// 删除回收站
-const clearRecycle = async (isLogin, e) => {
-  if (isLogin) {
-    let catcheData = await cache.get("GET_TODO");
-    let item = [];
-    item.push(
-      catcheData.find((item) => item.taskId == Number(e.target.parentNode.id))
-    );
-    clearRecycleDB(item, e, changeStatus);
-  } else {
-    clearRecycleLocal(e, changeStatus);
-  }
-};
-// 清空全部样式
-const clearAllStatus = (dom) => {
-  dom.lastChild.innerHTML = "";
-  dom.lastChild.appendChild(emptyBox("回收站为空～"));
-};
-// 清空回收站
-const clearAllRecycle = async (isLogin, dom) => {
-  if (dom.lastChild.firstChild.tagName == "LI") {
-    var flag = confirm("您确定清空回收站吗?"); //弹出确认框
-    if (flag) {
-      if (isLogin) {
-        let catcheData = await cache.get("GET_TODO");
-        const filterDelList = catcheData.filter((item) => item.isDel);
-        clearRecycleDB(filterDelList, dom, clearAllStatus);
-      } else {
-        clearAllDateLocal(dom, clearAllStatus);
-      }
-    }
-  } else {
-    Toast.show("当前回收站为空");
-  }
-};
+  recoverRecycle,
+  clearRecycle,
+  clearAllRecycle,
+} from "../util/operation";
 const recycleEvent = (isLogin, e) => {
   if (e.target.nodeName.toLocaleLowerCase() == "input") {
     switch (e.target.id) {

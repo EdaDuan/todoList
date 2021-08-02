@@ -17,6 +17,8 @@ import {
   changDataDB,
   delDataDB,
   editDataDB,
+  recoverRecycleDB,
+  clearRecycleDB,
 } from "./operateDB";
 import {
   newDataLocal,
@@ -24,6 +26,9 @@ import {
   changDataLocal,
   delDataLocal,
   editDataLocal,
+  recoverRecycleLocal,
+  clearRecycleLocal,
+  clearAllDateLocal,
 } from "./operateLocal";
 import { cacheData } from "./storeData";
 let cache = cacheData();
@@ -416,4 +421,64 @@ const todoListEvent = (listTag, delTag, isLogin, e) => {
     }
   }
 };
-export { newTodoList, selectAllTodoList, selectAllDoneList, todoListEvent };
+// 回收站
+// 修改状态
+const changeRecycleStatus = (e) => {
+  let ulNode = e.target.parentNode.parentNode;
+  ulNode.childNodes.length === 1
+    ? (ulNode.removeChild(e.target.parentNode),
+      ulNode.appendChild(emptyBox("回收站为空～")))
+    : ulNode.removeChild(e.target.parentNode);
+};
+// 待办项恢复
+const recoverRecycle = (isLogin, e) => {
+  if (isLogin) {
+    recoverRecycleDB(e, changeRecycleStatus);
+  } else {
+    recoverRecycleLocal(e, changeRecycleStatus);
+  }
+};
+// 删除回收站
+const clearRecycle = async (isLogin, e) => {
+  if (isLogin) {
+    let catcheData = await cache.get("GET_TODO");
+    let item = [];
+    item.push(
+      catcheData.find((item) => item.taskId == Number(e.target.parentNode.id))
+    );
+    clearRecycleDB(item, e, changeRecycleStatus);
+  } else {
+    clearRecycleLocal(e, changeRecycleStatus);
+  }
+};
+// 清空全部样式
+const clearAllStatus = (dom) => {
+  dom.lastChild.innerHTML = "";
+  dom.lastChild.appendChild(emptyBox("回收站为空～"));
+};
+// 清空回收站
+const clearAllRecycle = async (isLogin, dom) => {
+  if (dom.lastChild.firstChild.tagName == "LI") {
+    var flag = confirm("您确定清空回收站吗?"); //弹出确认框
+    if (flag) {
+      if (isLogin) {
+        let catcheData = await cache.get("GET_TODO");
+        const filterDelList = catcheData.filter((item) => item.isDel);
+        clearRecycleDB(filterDelList, dom, clearAllStatus);
+      } else {
+        clearAllDateLocal(dom, clearAllStatus);
+      }
+    }
+  } else {
+    Toast.show("当前回收站为空");
+  }
+};
+export {
+  newTodoList,
+  selectAllTodoList,
+  selectAllDoneList,
+  todoListEvent,
+  recoverRecycle,
+  clearRecycle,
+  clearAllRecycle,
+};

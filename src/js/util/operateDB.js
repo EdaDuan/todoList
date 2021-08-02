@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-20 11:39:42
- * @LastEditTime: 2021-07-22 11:39:27
+ * @LastEditTime: 2021-07-30 11:57:39
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/operateDB.js
@@ -13,7 +13,7 @@ import {
   moveTodoList,
   editTodoList,
   deleteTodoList,
-} from "../../http";
+} from "../../http/api";
 import formatData from "../util/formate";
 import Toast from "../util/toast";
 import { cacheData } from "./storeData";
@@ -28,6 +28,7 @@ const newDataDB = (
   changeNewStatus
 ) => {
   insertTodoList(newtodo).then((res) => {
+    console.log("res: ", res);
     if (res.ok) {
       getTodoList().then(async (res) => {
         if (res.ok) {
@@ -95,7 +96,7 @@ const changDataDB = async (e, statusFun) => {
     }
   });
 };
-// 删除数据库数据
+// 假删除数据库数据
 const delDataDB = async (e, delFun) => {
   let catcheData = await cache.get("GET_TODO");
   let item = catcheData.find(({ taskId }) => e.target.parentNode.id == taskId);

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-20 16:30:50
- * @LastEditTime: 2021-07-22 09:32:44
+ * @LastEditTime: 2021-07-29 15:22:47
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/toast.js
@@ -21,7 +21,7 @@ function Toast(props) {
   toast.innerHTML = `<div class="cpt-toast"><span style="color: ${props.color}">${props.msg}</span></div>`;
   ToastWrap.append(toast);
   setTimeout(() => {
-    document.getElementById(id).remove();
+    document.getElementsByClassName("toast-wrap")[0].remove();
   }, props.time || 2000);
 }
 

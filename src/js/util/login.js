@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 17:21:11
- * @LastEditTime: 2021-07-22 09:32:06
+ * @LastEditTime: 2021-07-30 10:48:15
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/login.js
@@ -11,7 +11,7 @@ import {
   popupLogin,
   closeLogin,
 } from "../components/loginDialog";
-import { userLogin, userRegister } from "../../http";
+import { userLogin, userRegister } from "../../http/api";
 import CookieUtil from "../util/cookieUtils";
 import Toast from "../util/toast";
 // 登陆按钮的DOM
@@ -50,24 +50,29 @@ const login = (accountDom, pwdDom) => {
     pwd: pwdDom.value,
     localTodoList,
     tag,
-  }).then((res) => {
-    if (res.ok) {
-      CookieUtil.set("ses_token", res.ses_token);
-      CookieUtil.set(
-        "user_msg",
-        JSON.stringify({
-          name: res.data[0].userName,
-        })
-      );
-      // 登陆成功更新页面的数据
-      loginStatus();
-      changClick();
+  })
+    .then((res) => {
+      if (res.ok) {
+        CookieUtil.set("ses_token", res.ses_token);
+        CookieUtil.set(
+          "user_msg",
+          JSON.stringify({
+            name: res.data[0].userName,
+          })
+        );
+        // 登陆成功更新页面的数据
+        loginStatus();
+        changClick();
+        closeLogin();
+        location.reload();
+      } else {
+        Toast.error(res.error);
+      }
+    })
+    .catch((e) => {
       closeLogin();
-      location.reload();
-    } else {
-      Toast.error(res.error);
-    }
-  });
+      Toast.error("服务器连接失败");
+    });
 };
 // 确认注册方法
 const register = (regRes, nameDom, accountDom, pwdDom) => {
