@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2021-07-09 10:58:24
- * @LastEditTime: 2021-07-09 11:08:26
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-08-09 15:09:53
+ * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/createTodo.js
  */
@@ -59,9 +59,10 @@ const addCheckName = (
   fragmentDone = fragmentTodo
 ) => {
   item.status
-    ? (checkbox.setAttribute("name", "todoList"), fragmentTodo.appendChild(dom))
-    : ((checkbox.checked = true),
+    ? ((checkbox.checked = true),
       checkbox.setAttribute("name", "doneList"),
-      fragmentDone.appendChild(dom));
+      fragmentDone.appendChild(dom))
+    : (checkbox.setAttribute("name", "todoList"),
+      fragmentTodo.appendChild(dom));
 };
 export { createTodo, addCheckName };

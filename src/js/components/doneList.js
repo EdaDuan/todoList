@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2021-06-25 16:22:06
- * @LastEditTime: 2021-07-12 15:48:32
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-08-09 15:29:51
+ * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/doneList.js
  */
@@ -57,7 +57,7 @@ const doneList = (data, isLogin) => {
   let fragmentAllTask = document.createDocumentFragment();
   // 获取所有未完成的待办项
   const filterallDone = data.filter(
-    (item) => item.status == false && !item.isDel
+    (item) => item.status == true && !item.isDel
   );
   // 获取分类后的数组
   let classifyArr = classifyTime(filterallDone);

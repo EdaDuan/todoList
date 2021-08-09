@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 17:21:11
- * @LastEditTime: 2021-07-30 10:48:15
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-08-09 10:51:51
+ * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/login.js
  */
@@ -11,7 +11,7 @@ import {
   popupLogin,
   closeLogin,
 } from "../components/loginDialog";
-import { userLogin, userRegister } from "../../http/api";
+import { post } from "../../http/index";
 import CookieUtil from "../util/cookieUtils";
 import Toast from "../util/toast";
 // 登陆按钮的DOM
@@ -38,59 +38,56 @@ const changClick = () => {
 };
 // 询问用户是否需要将本地数据同步到当前登陆账户
 // 确认登陆
-const login = (accountDom, pwdDom) => {
+const login = async (accountDom, pwdDom) => {
   let localTodoList = JSON.parse(localStorage.getItem("todoList"))
     ? JSON.parse(localStorage.getItem("todoList"))
     : [];
   let tag = "";
   let flag = confirm("是否同步本地数据?");
   flag ? (tag = true) : (tag = false);
-  userLogin({
-    account: accountDom.value,
-    pwd: pwdDom.value,
-    localTodoList,
-    tag,
-  })
-    .then((res) => {
-      if (res.ok) {
-        CookieUtil.set("ses_token", res.ses_token);
+  try {
+    let res = await post("userLogin", {
+      account: accountDom.value,
+      pwd: pwdDom.value,
+      localTodoList,
+      tag,
+    });
+    res.data.ok
+      ? (CookieUtil.set("ses_token", res.data.ses_token),
         CookieUtil.set(
           "user_msg",
           JSON.stringify({
-            name: res.data[0].userName,
+            name: res.data.data[0].userName,
           })
-        );
+        ),
         // 登陆成功更新页面的数据
-        loginStatus();
-        changClick();
-        closeLogin();
-        location.reload();
-      } else {
-        Toast.error(res.error);
-      }
-    })
-    .catch((e) => {
-      closeLogin();
-      Toast.error("服务器连接失败");
-    });
+        loginStatus(),
+        changClick(),
+        closeLogin(),
+        location.reload())
+      : Toast.error(res.data.error);
+  } catch (error) {
+    console.log("error1: ", error);
+    closeLogin();
+    Toast.error("服务器连接失败");
+  }
 };
 // 确认注册方法
-const register = (regRes, nameDom, accountDom, pwdDom) => {
+const register = async (regRes, nameDom, accountDom, pwdDom) => {
   if (regRes()) {
-    userRegister({
+    let res = await post("userRegister", {
       userName: nameDom.value,
       account: accountDom.value,
       pwd: pwdDom.value,
-    }).then((res) => {
-      if (res.ok) {
-        Toast.show("注册成功，请登录");
-        nameDom.value = "";
-        accountDom.value = "";
-        pwdDom.value = "";
-      } else {
-        Toast.error(res.error);
-      }
     });
+    if (res.data.ok) {
+      Toast.show("注册成功，请登录");
+      nameDom.value = "";
+      accountDom.value = "";
+      pwdDom.value = "";
+    } else {
+      Toast.error(res.data.error);
+    }
   }
 };
 // 注销账号

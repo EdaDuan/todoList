@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2021-07-20 11:39:52
- * @LastEditTime: 2021-07-22 11:45:25
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-08-09 16:30:07
+ * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/operateLocal.js
  */
@@ -37,7 +37,7 @@ const newDataLocal = (
 const filterStatusLocal = (data, status) => {
   data.map((item) => {
     if (formatData(new Date(item.finishTime)) == formatData(new Date())) {
-      status ? (item.status = 0) : (item.status = 1);
+      status ? (item.status = 1) : (item.status = 0);
     }
   });
   return data;

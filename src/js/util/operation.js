@@ -30,6 +30,7 @@ import {
   clearRecycleLocal,
   clearAllDateLocal,
 } from "./operateLocal";
+import Toast from "../util/toast";
 import { cacheData } from "./storeData";
 let cache = cacheData();
 let conTodoUl = document.querySelector(".con-todo-ul");
@@ -54,7 +55,7 @@ const newSure = () => {
   // 获取时间戳
   let createTime = Date.parse(new Date());
   let newtodo = {
-    status: 1,
+    status: 0,
     isDel: 0,
   };
   let taskName = dialogInputName.value; //使用nameValue存储
@@ -119,9 +120,9 @@ const changeAllStatus = (fragment, ul, domList) => {
   fragment.appendChild(domList);
 };
 // 更改数据
-const changeAllData = (status, isLogin) => {
+const changeAllData = async (status, isLogin) => {
   if (isLogin) {
-    changeAllDataDB(status);
+    await changeAllDataDB(status);
   } else {
     changeAllDataLocal(status);
   }
@@ -175,18 +176,25 @@ const changeStatus = (
   clickLabel,
   renderLabel,
   ul,
+  isLogin,
   text
 ) => {
   // 判断是否为最后一项,为最后一项，在点击之后需要添加空盒子和给全选按钮加状态
   if (e.target.parentNode.parentNode.childNodes.length === 1) {
     isTodoLast(e, clickAllBtn, clickLabel, text);
   }
-  e.target.parentNode.firstChild.checked
-    ? isTodoEmpty(e, renderAllBtn, renderLabel, ul, "todoList")
-    : isTodoEmpty(e, renderAllBtn, renderLabel, ul, "doneList");
+  if (isLogin) {
+    e.target.parentNode.firstChild.checked
+      ? isTodoEmpty(e, renderAllBtn, renderLabel, ul, "doneList")
+      : isTodoEmpty(e, renderAllBtn, renderLabel, ul, "todoList");
+  } else {
+    e.target.parentNode.firstChild.checked
+      ? isTodoEmpty(e, renderAllBtn, renderLabel, ul, "todoList")
+      : isTodoEmpty(e, renderAllBtn, renderLabel, ul, "doneList");
+  }
 };
 // 今日待办项状态
-const changTodoStatus = (e) => {
+const changTodoStatus = (e, isLogin) => {
   isListUl(e)
     ? // todo
       changeStatus(
@@ -196,6 +204,7 @@ const changTodoStatus = (e) => {
         taskLabel[0],
         taskLabel[1],
         conDoneUl,
+        isLogin,
         "今日任务已全部完成～"
       )
     : // done
@@ -206,6 +215,7 @@ const changTodoStatus = (e) => {
         taskLabel[1],
         taskLabel[0],
         conTodoUl,
+        isLogin,
         "今日还未完成任务～"
       );
 };
@@ -475,6 +485,7 @@ const clearAllRecycle = async (isLogin, dom) => {
 };
 export {
   newTodoList,
+  // selectAllList,
   selectAllTodoList,
   selectAllDoneList,
   todoListEvent,

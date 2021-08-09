@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2021-06-25 16:07:16
- * @LastEditTime: 2021-07-17 07:31:33
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-08-09 15:30:00
+ * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/notDoneList.js
  */
@@ -60,7 +60,7 @@ const notDoneList = (data, isLogin) => {
   let fragmentNotDone = document.createDocumentFragment();
   // 获取所有未完成的待办项
   const filterNotDoneList = data.filter(
-    (item) => item.status == true && !item.isDel
+    (item) => item.status == false && !item.isDel
   );
   // 获取分类后的数组
   let classifyArr = classifyTime(filterNotDoneList);
