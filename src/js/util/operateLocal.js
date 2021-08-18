@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-20 11:39:52
- * @LastEditTime: 2021-08-09 16:30:07
+ * @LastEditTime: 2021-08-18 11:35:09
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/operateLocal.js
@@ -60,7 +60,7 @@ const changDataLocal = (e, statusFun) => {
   );
   if (item) {
     item.status ? (item.status = 0) : (item.status = 1);
-    statusFun(e);
+    statusFun(e, true);
     localStorage.setItem("todoList", JSON.stringify(localTodoList));
   } else {
     e.target.parentNode.firstChild.checked = true;
@@ -80,10 +80,11 @@ const delDataLocal = (e, delFun) => {
 };
 // 编辑修改本地数据
 const editDataLocal = (e, item, data, nameValue, finishTime, editFun) => {
+  let itemTag = item.finishTime === Date.parse(finishTime) ? true : false;
   item
     ? ((item.taskName = nameValue),
       (item.finishTime = Date.parse(finishTime)),
-      editFun(e, nameValue),
+      editFun(e, nameValue, itemTag, finishTime, false),
       localStorage.setItem("todoList", JSON.stringify(data)))
     : Toast.error("编辑待办项失败");
 };
@@ -119,7 +120,6 @@ const clearAllDateLocal = (dom, clearAllFun) => {
     ? JSON.parse(localStorage.getItem("todoList"))
     : [];
   const filterDelList = localTodoList.filter((item) => item.isDel);
-
   filterDelList.map((listItem) => {
     localTodoList.splice(
       localTodoList.findIndex((item) => item.taskId === listItem.taskId),

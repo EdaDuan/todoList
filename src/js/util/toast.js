@@ -1,15 +1,15 @@
 /*
  * @Author: your name
  * @Date: 2021-07-20 16:30:50
- * @LastEditTime: 2021-07-29 15:22:47
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-08-18 15:04:50
+ * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/toast.js
  */
-let ToastWrap = null;
-let count = 0;
 
 function Toast(props) {
+  let ToastWrap = null;
+  let count = 0;
   if (!ToastWrap) {
     ToastWrap = document.createElement("div");
     ToastWrap.setAttribute("class", "toast-wrap");

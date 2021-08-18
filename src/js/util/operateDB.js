@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-20 11:39:42
- * @LastEditTime: 2021-08-09 16:29:58
+ * @LastEditTime: 2021-08-17 23:12:50
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/operateDB.js
@@ -74,11 +74,12 @@ const changDataDB = async (e, statusFun) => {
   let catcheData = await cache.get("GET_TODO");
   const item = [];
   item.push(catcheData.find(({ taskId }) => e.target.parentNode.id == taskId));
+  statusFun(e, true);
   let res = await post("updateTodoStatus", item);
   if (res.data.ok) {
     let result = await get("getTodoList");
     result.data.ok
-      ? (cache.set("GET_TODO", result.data.data), statusFun(e, true))
+      ? cache.set("GET_TODO", result.data.data)
       : Toast.error(result.data.error);
   } else {
     Toast.error(res.data.error);
@@ -100,14 +101,15 @@ const delDataDB = async (e, delFun) => {
 };
 // 编辑 修改数据
 const editDataDB = async (e, item, nameValue, finishTime, editFun) => {
+  let itemTag = item.finishTime === Date.parse(finishTime) ? true : false;
   item.taskName = nameValue;
   item.finishTime = Date.parse(finishTime);
-
   let res = await post("editTodoList", item);
   if (res.data.ok) {
     let result = await get("getTodoList");
     result.data.ok
-      ? (cache.set("GET_TODO", result.data.data), editFun(e, nameValue))
+      ? (cache.set("GET_TODO", result.data.data),
+        editFun(e, nameValue, itemTag, finishTime, true))
       : Toast.error(result.data.error);
   } else {
     Toast.error(res.data.error);

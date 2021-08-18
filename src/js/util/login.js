@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 17:21:11
- * @LastEditTime: 2021-08-09 10:51:51
+ * @LastEditTime: 2021-08-18 16:12:11
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/login.js
@@ -67,7 +67,6 @@ const login = async (accountDom, pwdDom) => {
         location.reload())
       : Toast.error(res.data.error);
   } catch (error) {
-    console.log("error1: ", error);
     closeLogin();
     Toast.error("服务器连接失败");
   }
@@ -88,6 +87,8 @@ const register = async (regRes, nameDom, accountDom, pwdDom) => {
     } else {
       Toast.error(res.data.error);
     }
+  } else {
+    Toast.error("请输入正确的注册信息");
   }
 };
 // 注销账号

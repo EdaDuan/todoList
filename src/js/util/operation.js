@@ -30,6 +30,7 @@ import {
   clearRecycleLocal,
   clearAllDateLocal,
 } from "./operateLocal";
+import { addTimeBoxNotDone, addTimeBoxDone } from "../components/createTimeBox";
 import Toast from "../util/toast";
 import { cacheData } from "./storeData";
 let cache = cacheData();
@@ -176,25 +177,19 @@ const changeStatus = (
   clickLabel,
   renderLabel,
   ul,
-  isLogin,
+  isEdit,
   text
 ) => {
   // 判断是否为最后一项,为最后一项，在点击之后需要添加空盒子和给全选按钮加状态
-  if (e.target.parentNode.parentNode.childNodes.length === 1) {
+  if (e.target.parentNode.parentNode.childNodes.length === 1 && isEdit) {
     isTodoLast(e, clickAllBtn, clickLabel, text);
   }
-  if (isLogin) {
-    e.target.parentNode.firstChild.checked
-      ? isTodoEmpty(e, renderAllBtn, renderLabel, ul, "doneList")
-      : isTodoEmpty(e, renderAllBtn, renderLabel, ul, "todoList");
-  } else {
-    e.target.parentNode.firstChild.checked
-      ? isTodoEmpty(e, renderAllBtn, renderLabel, ul, "todoList")
-      : isTodoEmpty(e, renderAllBtn, renderLabel, ul, "doneList");
-  }
+  e.target.parentNode.firstChild.checked
+    ? isTodoEmpty(e, renderAllBtn, renderLabel, ul, "todoList")
+    : isTodoEmpty(e, renderAllBtn, renderLabel, ul, "doneList");
 };
 // 今日待办项状态
-const changTodoStatus = (e, isLogin) => {
+const changTodoStatus = (e, isEdit) => {
   isListUl(e)
     ? // todo
       changeStatus(
@@ -204,7 +199,7 @@ const changTodoStatus = (e, isLogin) => {
         taskLabel[0],
         taskLabel[1],
         conDoneUl,
-        isLogin,
+        isEdit,
         "今日任务已全部完成～"
       )
     : // done
@@ -215,12 +210,12 @@ const changTodoStatus = (e, isLogin) => {
         taskLabel[1],
         taskLabel[0],
         conTodoUl,
-        isLogin,
+        isEdit,
         "今日还未完成任务～"
       );
 };
 // 未完成状态
-const notDoneChanStatus = (e) => {
+const notDoneChangeStatus = (e) => {
   let allNotDone = document.querySelector(".allNotDone");
   // 修改checkbox的name属性值
   e.target.parentNode.firstChild.name = "doneList";
@@ -232,8 +227,8 @@ const notDoneChanStatus = (e) => {
     allNotDone.appendChild(emptyBox("所有任务已完成～"));
   }
 };
-// 已完成的勾选事件
-const doneChanStatus = (e) => {
+// 已完成
+const doneChangeStatus = (e) => {
   let allDone = document.querySelector(".allDone");
   // 修改checkbox的name属性值
   e.target.parentNode.firstChild.name = "todoList";
@@ -252,20 +247,6 @@ const changeData = (isLogin, e, statusFun) => {
   } else {
     changDataLocal(e, statusFun);
   }
-};
-// 今日待办勾选事件
-const changeList = (isLogin, e) => {
-  changeData(isLogin, e, changTodoStatus);
-};
-// 未完成的勾选事件
-const notDoneChangList = (isLogin, e) => {
-  // 改变数据
-  changeData(isLogin, e, notDoneChanStatus);
-};
-// 完成勾选事件
-const doneChangList = (isLogin, e) => {
-  // 改变数据
-  changeData(isLogin, e, doneChanStatus);
 };
 // 删除
 // 今日待办项删除状态
@@ -308,33 +289,118 @@ const delData = (isLogin, e, delFun) => {
     delDataLocal(e, delFun);
   }
 };
-// 今日待办项的删除
-const delList = (isLogin, e) => {
-  delData(isLogin, e, delStatus);
-};
-// 完成中的删除事件
-const delDoneList = (isLogin, e) => {
-  delData(isLogin, e, delDoneStatus);
-};
-// 未完成中的删除事件
-const delNotDoneList = (isLogin, e) => {
-  delData(isLogin, e, delNotDoneStatus);
-};
 
+// 编辑
+// 当修改后没有修改后的时间盒子，需要添加一个新的时间盒子DOM，获取添加的位置
+const getInsertDom = (obj, finishTime) => {
+  for (let item in obj) {
+    if (Date.parse(item) < Date.parse(finishTime)) {
+      return obj[item];
+    }
+  }
+  return null;
+};
+// 在完成页面将todo修改为不同时间
+const changDiffTimeDone = (element, currentItemBox, finishTime, isLogin) => {
+  let allDone = document.querySelector(".allDone");
+  let doneBox = document.querySelectorAll(".doneBox"); //获取所有doneBox
+  let DateItem; //保存当前时间盒子
+  let timeSortObj = {}; // 定义时间盒子对象
+  // 遍历时间盒子 是否存在当前时间
+  doneBox.forEach((item) => {
+    timeSortObj[item.childNodes[0].innerHTML] = item;
+    if (item.childNodes[0].innerHTML == finishTime) {
+      DateItem = item;
+    }
+  });
+  // 如果当前有这个时间盒子
+  if (DateItem) {
+    DateItem.childNodes[1].appendChild(element.target.parentNode);
+    // 如果当前没有修改后的时间盒子 需要新增
+  } else {
+    let timeBox = addTimeBoxDone(
+      element.target.parentNode,
+      finishTime,
+      isLogin
+    );
+    let beferDom = getInsertDom(timeSortObj, finishTime); // 获取到插入的位置
+    if (beferDom) {
+      allDone.insertBefore(timeBox, beferDom);
+    } else {
+      allDone.appendChild(timeBox);
+    }
+  }
+  if (currentItemBox.childNodes[1].childNodes.length === 0) {
+    currentItemBox.remove();
+  }
+};
+// 在完成页面将todo修改为不同时间
+const changDiffTimeNotDone = (element, currentItemBox, finishTime, isLogin) => {
+  let allNotDone = document.querySelector(".allNotDone");
+  let notDoneBox = document.querySelectorAll(".notDoneBox"); //获取所有doneBox
+  let DateItem; //保存当前时间盒子
+  let timeSortObj = {}; // 定义时间盒子对象
+  // 遍历时间盒子 是否存在当前时间
+  notDoneBox.forEach((item) => {
+    timeSortObj[item.childNodes[0].innerHTML] = item;
+    if (item.childNodes[0].innerHTML == finishTime) {
+      DateItem = item;
+    }
+  });
+  // 如果当前有这个时间盒子
+  if (DateItem) {
+    DateItem.childNodes[1].appendChild(element.target.parentNode);
+    // 如果当前没有修改后的时间盒子 需要新增
+  } else {
+    let timeBox = addTimeBoxNotDone(
+      element.target.parentNode,
+      finishTime,
+      isLogin
+    );
+    let beferDom = getInsertDom(timeSortObj, finishTime); // 获取到插入的位置
+    if (beferDom) {
+      allNotDone.insertBefore(timeBox, beferDom);
+    } else {
+      allNotDone.appendChild(timeBox);
+    }
+  }
+  if (currentItemBox.childNodes[1].childNodes.length === 0) {
+    currentItemBox.remove();
+  }
+};
+// 修改UI
+const changeEditStatus = (element, nameValue, itemTag, finishTime, isLogin) => {
+  element.target.parentNode.childNodes.forEach((item) => {
+    if (item.tagName === "SPAN") {
+      item.innerText = nameValue;
+    }
+  }); //当修改的时间与当前的时间不一样的时候
+  if (!itemTag) {
+    // 获取DOM节点 当前编辑页面的外层DOM
+    let getCLassName =
+      element.target.parentNode.parentNode.getAttribute("class");
+    let currentItemBox = element.target.parentNode.parentNode.parentNode; //保存当前点击的box
+    switch (getCLassName) {
+      case "doneUl":
+        changDiffTimeDone(element, currentItemBox, finishTime, isLogin);
+        break;
+      case "notDoneUl":
+        changDiffTimeNotDone(element, currentItemBox, finishTime, isLogin);
+        break;
+      default:
+        changTodoStatus(element, true);
+        element.target.parentNode.parentNode.removeChild(
+          element.target.parentNode
+        );
+    }
+  }
+};
 // 编辑
 const getEditData = (e, data) => {
   const item = data.find(
     ({ taskId }) => Number(e.target.parentNode.id) == taskId
   );
   return item;
-};
-// 编辑 修改UI
-const changeEditStatus = (element, nameValue) => {
-  element.target.parentNode.childNodes.forEach((item) => {
-    if (item.tagName === "SPAN") {
-      item.innerText = nameValue;
-    }
-  });
 };
 // 编辑确认事件判断
 const editSure = (isLogin, e, item, data) => {
@@ -387,13 +453,13 @@ const chooseList = (listTag, isLogin, e) => {
   switch (listTag) {
     // 今日待办项
     case "TODO":
-      return changeList(isLogin, e);
+      return changeData(isLogin, e, changTodoStatus);
     //  未完成
     case "NOTDONE":
-      return notDoneChangList(isLogin, e);
+      return changeData(isLogin, e, notDoneChangeStatus);
     //  已完成
     case "DONE":
-      return doneChangList(isLogin, e);
+      return changeData(isLogin, e, doneChangeStatus);
     default:
       console.log("error");
   }
@@ -403,13 +469,13 @@ const chooseDel = (delTag, isLogin, e) => {
   switch (delTag) {
     // 今日待办项
     case "TODODEL":
-      return delList(isLogin, e);
+      return delData(isLogin, e, delStatus);
     //  未完成
     case "NOTDONEDEL":
-      return delNotDoneList(isLogin, e);
+      return delData(isLogin, e, delNotDoneStatus);
     //  已完成
     case "DONEDEL":
-      return delDoneList(isLogin, e);
+      return delData(isLogin, e, delDoneStatus);
     default:
       console.log("error");
   }
@@ -417,7 +483,7 @@ const chooseDel = (delTag, isLogin, e) => {
 const todoListEvent = (listTag, delTag, isLogin, e) => {
   let nodeName = e.target.nodeName.toLocaleLowerCase();
   if (nodeName == "input" || nodeName == "label") {
-    switch (e.target.id) {
+    switch (e.target.getAttribute("name")) {
       case "todoCheck":
         chooseList(listTag, isLogin, e);
         break;
@@ -485,7 +551,6 @@ const clearAllRecycle = async (isLogin, dom) => {
 };
 export {
   newTodoList,
-  // selectAllList,
   selectAllTodoList,
   selectAllDoneList,
   todoListEvent,

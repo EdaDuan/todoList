@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-09 10:58:24
- * @LastEditTime: 2021-08-09 15:09:53
+ * @LastEditTime: 2021-08-18 11:35:59
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/createTodo.js
@@ -17,9 +17,9 @@ const createCheckbox = (dom, data) => {
   return checkbox;
 };
 // 创建lable
-const createLabel = (dom, data, id) => {
+const createLabel = (dom, data, name) => {
   let label = document.createElement("label");
-  label.setAttribute("id", id);
+  label.setAttribute("name", name);
   label.setAttribute("for", "check" + data.taskId);
   dom.appendChild(label);
 };
@@ -30,11 +30,11 @@ const createSpan = (dom, data) => {
   dom.appendChild(span);
 };
 // 创建button
-const createBtn = (dom, className, id, text) => {
+const createBtn = (dom, className, name, text) => {
   let btn = document.createElement("input");
   btn.setAttribute("class", className);
   btn.setAttribute("type", "button");
-  btn.setAttribute("id", id);
+  btn.setAttribute("name", name);
   btn.setAttribute("value", text);
   dom.appendChild(btn);
 };

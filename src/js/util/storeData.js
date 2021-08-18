@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-20 09:18:51
- * @LastEditTime: 2021-08-09 14:49:01
+ * @LastEditTime: 2021-08-16 17:47:17
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/getData.js
@@ -19,10 +19,8 @@ function cacheData() {
     get: async (tag) => {
       //读取数据
       if (tag in cache) {
-        console.log("数据已缓存,无需重复请求");
         return cache[tag];
       } else {
-        console.log("需重新请求");
         let res = await get("getTodoList");
         if (res.data.ok) {
           return res.data;
