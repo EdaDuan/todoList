@@ -1,18 +1,18 @@
 /*
  * @Author: your name
  * @Date: 2021-07-09 10:58:24
- * @LastEditTime: 2021-08-18 11:35:59
+ * @LastEditTime: 2021-08-29 20:44:20
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/createTodo.js
  */
-
+import { html_decode } from "../common/validate";
 // 创建checkbox
 const createCheckbox = (dom, data) => {
   let checkbox = document.createElement("input");
   checkbox.setAttribute("id", "check" + data.taskId);
   checkbox.setAttribute("type", "checkbox");
-  checkbox.setAttribute("value", data.taskName);
+  checkbox.setAttribute("value", html_decode(data.taskName));
   dom.appendChild(checkbox);
   return checkbox;
 };
@@ -26,7 +26,7 @@ const createLabel = (dom, data, name) => {
 // 创建span
 const createSpan = (dom, data) => {
   let span = document.createElement("span");
-  span.innerText = data.taskName;
+  span.innerText = html_decode(data.taskName);
   dom.appendChild(span);
 };
 // 创建button

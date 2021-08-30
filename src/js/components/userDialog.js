@@ -1,13 +1,20 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 14:29:08
- * @LastEditTime: 2021-07-21 10:56:46
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-08-29 15:40:11
+ * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/loginDialog.js
  */
 // 引入校验规则
-import { checkName, checkAccount, checkPw, getCheckRes } from "../util/common";
+import {
+  checkName,
+  checkAccount,
+  checkPw,
+  getCheckLogin,
+  getCheckRes,
+} from "../common/validate";
+import { USER_TEXT } from "../common/constant";
 // 创建div
 const createDiv = (dom, className) => {
   let div = document.createElement("div");
@@ -22,11 +29,11 @@ const createLabel = (dom, text) => {
   dom.appendChild(label);
 };
 // 创建input
-const createInput = (dom, className, type) => {
+const createInput = (dom, className, type, placeholder) => {
   let input = document.createElement("input");
   input.setAttribute("id", className);
   input.setAttribute("type", type);
-  input.setAttribute("value", "");
+  input.placeholder = placeholder;
   dom.appendChild(input);
   return input;
 };
@@ -42,15 +49,28 @@ const createBtn = (dom, className, text) => {
 const createLogin = (dom, login, cancel) => {
   let loginInputAccount = createDiv(dom, "login-input");
   createLabel(loginInputAccount, "账号：");
-  createInput(loginInputAccount, "login-account", "text");
+  createInput(
+    loginInputAccount,
+    "login-account",
+    "text",
+    USER_TEXT.USER_ACCOUNT
+  ).addEventListener("blur", checkAccount.bind(this, "login-account"));
+
   let loginInputPw = createDiv(dom, "login-input");
   createLabel(loginInputPw, "密码：");
-  createInput(loginInputPw, "login-password", "password");
+  createInput(
+    loginInputPw,
+    "login-password",
+    "password",
+    USER_TEXT.USER_PW
+  ).addEventListener("blur", checkPw.bind(this, "login-password"));
+
   let loginInputBtn = createDiv(dom, "login-input-btn");
   createBtn(loginInputBtn, "login-sure", "确定").addEventListener(
     "click",
     login.bind(
       this,
+      getCheckLogin.bind(this),
       document.querySelector("#login-account"),
       document.querySelector("#login-password")
     )
@@ -65,24 +85,28 @@ const createLogin = (dom, login, cancel) => {
 const createRegister = (dom, register, cancel) => {
   let registerInputName = createDiv(dom, "register-input");
   createLabel(registerInputName, "用户名：");
-  createInput(registerInputName, "register-username", "text").addEventListener(
-    "blur",
-    checkName.bind(this)
-  );
+  createInput(
+    registerInputName,
+    "register-username",
+    "text",
+    USER_TEXT.USER_NAME
+  ).addEventListener("blur", checkName.bind(this, "register-username"));
   let registerInputAccount = createDiv(dom, "register-input");
   createLabel(registerInputAccount, "账号：");
   createInput(
     registerInputAccount,
     "register-account",
-    "text"
-  ).addEventListener("blur", checkAccount.bind(this));
+    "text",
+    USER_TEXT.USER_ACCOUNT
+  ).addEventListener("blur", checkAccount.bind(this, "register-account"));
   let registerInputPw = createDiv(dom, "register-input");
   createLabel(registerInputPw, "密码：");
   createInput(
     registerInputPw,
     "register-password",
-    "password"
-  ).addEventListener("blur", checkPw.bind(this));
+    "password",
+    USER_TEXT.USER_PW
+  ).addEventListener("blur", checkPw.bind(this, "register-password"));
   let loginInputBtn = createDiv(dom, "register-input-btn");
   createBtn(loginInputBtn, "register-sure", "确定").addEventListener(
     "click",

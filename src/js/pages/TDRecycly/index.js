@@ -1,17 +1,18 @@
 /*
  * @Author: your name
  * @Date: 2021-06-30 18:57:26
- * @LastEditTime: 2021-07-29 17:03:42
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-08-29 21:10:06
+ * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/recycleList.js
  */
-import { emptyBox } from "../util/common";
+import { html_decode } from "../../common/validate";
+import { emptyBox } from "../../common/common";
 import {
   recoverRecycle,
   clearRecycle,
   clearAllRecycle,
-} from "../util/operation";
+} from "../../util/todoList/index";
 const recycleEvent = (isLogin, e) => {
   if (e.target.nodeName.toLocaleLowerCase() == "input") {
     switch (e.target.id) {
@@ -42,8 +43,9 @@ const createLabel = (dom, index, className) => {
 };
 // 创建span
 const createSpan = (data, dom) => {
+  console.log("data: ", data);
   let span = document.createElement("span");
-  span.innerText = data.taskName;
+  span.innerText = html_decode(data.taskName);
   dom.appendChild(span);
 };
 // 创建按钮

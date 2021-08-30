@@ -1,3 +1,12 @@
+/*
+ * @Description:
+ * @Version: 2.0
+ * @Autor: duanfy
+ * @Date: 2021-06-29 17:31:24
+ * @LastEditors: duanfy
+ * @LastEditTime: 2021-08-29 21:02:23
+ */
+import { html_decode } from "../common/validate";
 // 创建div
 const createDiv = (dom, className) => {
   let div = document.createElement("div");
@@ -20,10 +29,12 @@ const createLabel = (dom, text) => {
 };
 // 创建input
 const createInput = (dom, className, value, type) => {
+  console.log("value: ", value);
   let input = document.createElement("input");
   input.setAttribute("id", className);
   input.setAttribute("type", type);
-  input.value = value;
+  input.placeholder = "例：明天有早会";
+  input.value = html_decode(value);
   dom.appendChild(input);
 };
 // 创建button

@@ -4,10 +4,10 @@
  * @Autor: duanfy
  * @Date: 2021-08-17 22:58:13
  * @LastEditors: duanfy
- * @LastEditTime: 2021-08-17 23:03:17
+ * @LastEditTime: 2021-08-27 18:45:24
  */
 // 当修改后没有当前的时间盒子，需要添加DOM元素 未完成页面
-import { todoListEvent } from "../util/operation";
+import { todoListEvent } from "../util/todoList/index";
 const addTimeBoxNotDone = (itemLi, finishTime, isLogin) => {
   let div = document.createElement("div"); //创建DIV
   div.setAttribute("class", "notDoneBox");

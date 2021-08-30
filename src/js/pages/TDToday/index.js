@@ -1,25 +1,27 @@
 /*
  * @Author: your name
  * @Date: 2021-07-08 16:52:16
- * @LastEditTime: 2021-08-09 09:44:56
+ * @LastEditTime: 2021-08-29 10:57:44
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/todoList.js
  */
-import { listEmpty, listNotEmpty, emptyBox } from "../util/common";
-import formatData from "../util/formate";
+import { listEmpty, listNotEmpty, emptyBox } from "../../common/common";
+import formatDate from "../../common/formate";
 import {
-  selectAllTodoList,
-  selectAllDoneList,
+  selectAllList,
   todoListEvent,
-} from "../util/operation";
-import { createTodo, addCheckName } from "./createTodo";
+  createTodoItem,
+} from "../../util/todoList/index";
+import { createTodo, addCheckName } from "../../components/todoItem";
+import { initDialog, popupDialog } from "../../components/todoDialog";
 // 获取今日待办项的ul
-let conTodoUl = document.querySelector(".con-todo-ul");
-let conDoneUl = document.querySelector(".con-done-ul");
+let conTodoUl = document.querySelector("#con-todo-ul");
+let conDoneUl = document.querySelector("#con-done-ul");
 let selectAllTodo = document.getElementById("selectAllTodo");
 let selectAllDone = document.getElementById("selectAllDone");
 let taskLabel = document.getElementsByClassName("taskLabel");
+let newDialog = document.querySelector(".tasks-new-dialog");
 
 const todoListDataRender = (data) => {
   // 创建文档片段
@@ -30,7 +32,7 @@ const todoListDataRender = (data) => {
   // 根据所有数据，过滤获取今日的todoList
   const filterTodoList = data.filter(
     (item) =>
-      formatData(new Date(item.finishTime)) == formatData(new Date()) &&
+      formatDate(new Date(item.finishTime)) == formatDate(new Date()) &&
       !item.isDel
   );
   // 根据今日待办项，创建DOM
@@ -64,14 +66,23 @@ const todoList = (data, isLogin) => {
   );
   selectAllTodo.addEventListener(
     "click",
-    selectAllTodoList.bind(this, isLogin),
+    selectAllList.bind(this, isLogin),
     false
   );
   selectAllDone.addEventListener(
     "click",
-    selectAllDoneList.bind(this, isLogin),
+    selectAllList.bind(this, isLogin),
     false
   );
+  newDialog.addEventListener("click", () => {
+    initDialog({
+      text: "新建任务项",
+      nameValue: "",
+      timeValue: formatDate(new Date()),
+      okEvent: createTodoItem,
+    });
+    popupDialog();
+  });
   todoListDataRender(data);
 };
 export { todoList, todoListDataRender };

@@ -73,7 +73,7 @@
   height: 3.75rem;
   text-align: center;
   line-height: 3.75rem;
-  background-image: url("../assets/imgs/cloud.png");
+  background-image: url("../imgs/cloud.png");
   background-size: 100%;
   background-repeat: no-repeat;
 }
@@ -214,12 +214,12 @@
   border: 1px solid #eee;
   border-radius: 8px;
 }
-.con-todo-ul span,
+#con-todo-ul span,
 .allNotDone span,
 .recycleUl span {
   color: #666;
 }
-.con-done-ul span,
+#con-done-ul span,
 .doneUl span {
   color: #999;
   text-decoration: line-through solid #999 2px;
@@ -298,7 +298,7 @@
   justify-content: center;
   width: 100%;
   margin: 1rem 0;
-  /* background-color: #fff; */
+  /* background-color: red; */
 }
 .login-input label,
 .dialog-input label,
@@ -306,14 +306,16 @@
   width: 5rem;
   text-align: right;
   font-size: 1rem;
+  /* background-color: orange; */
 }
 .login-input input,
 .dialog-input input,
 .register-input input {
-  width: 14rem;
+  width: 18rem;
   height: 1.875rem;
-  margin-top: 0.6rem;
+  margin-top: 0.7rem;
   outline: none;
+  /* background-color: green; */
 }
 .dialog-input-btn,
 .login-input-btn,

@@ -1,25 +1,16 @@
 /*
- * @Author: your name
- * @Date: 2021-07-20 11:39:52
- * @LastEditTime: 2021-08-18 11:35:09
+ * @Description:
+ * @Version: 2.0
+ * @Autor: duanfy
+ * @Date: 2021-08-26 17:24:01
  * @LastEditors: duanfy
- * @Description: In User Settings Edit
- * @FilePath: /todoList/src/js/util/operateLocal.js
+ * @LastEditTime: 2021-08-27 19:14:51
  */
-// 新建待办项
-import formatData from "../util/formate";
-import Toast from "../util/toast";
-const newDataLocal = (
-  newtodo,
-  finishTime,
-  conTodoUl,
-  selectAllTodo,
-  taskLabel,
-  changeNewStatus
-) => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
+import formatDate from "../../common/formate";
+import { todoLocalStorage } from "../../store/localStorage";
+import Toast from "../../common/toast";
+const changeCreateLocal = (newtodo, finishTime, changeCreateStatus) => {
+  let localTodoList = todoLocalStorage();
   let taskId = localTodoList.length
     ? localTodoList[localTodoList.length - 1].taskId + 1
     : 0;
@@ -27,8 +18,8 @@ const newDataLocal = (
     taskId,
     ...newtodo,
   };
-  if (formatData(new Date(finishTime)) == formatData(new Date())) {
-    changeNewStatus(newtodo, conTodoUl, selectAllTodo, taskLabel);
+  if (formatDate(new Date(finishTime)) == formatDate(new Date())) {
+    changeCreateStatus(newtodo);
   }
   localTodoList.push(newtodo);
   localStorage.setItem("todoList", JSON.stringify(localTodoList));
@@ -36,25 +27,21 @@ const newDataLocal = (
 //获取到今日待办项完成与未完成
 const filterStatusLocal = (data, status) => {
   data.map((item) => {
-    if (formatData(new Date(item.finishTime)) == formatData(new Date())) {
+    if (formatDate(new Date(item.finishTime)) == formatDate(new Date())) {
       status ? (item.status = 1) : (item.status = 0);
     }
   });
   return data;
 };
 // 全选是修改本地数据
-const changeAllDataLocal = (status) => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
+const changeSelectAllLocal = (status) => {
+  let localTodoList = todoLocalStorage();
   let filterData = filterStatusLocal(localTodoList, status);
   localStorage.setItem("todoList", JSON.stringify(filterData));
 };
 // 勾选待办项修改本地数据
-const changDataLocal = (e, statusFun) => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
+const changSelectLocal = (e, statusFun) => {
+  let localTodoList = todoLocalStorage();
   const item = localTodoList.find(
     ({ taskId }) => e.target.parentNode.id == taskId
   );
@@ -68,10 +55,8 @@ const changDataLocal = (e, statusFun) => {
   }
 };
 // 删除本地数据
-const delDataLocal = (e, delFun) => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
+const hanegeDelLocal = (e, delFun) => {
+  let localTodoList = todoLocalStorage();
   const item = localTodoList.find(
     ({ taskId }) => e.target.parentNode.id == taskId
   );
@@ -79,20 +64,23 @@ const delDataLocal = (e, delFun) => {
   localStorage.setItem("todoList", JSON.stringify(localTodoList));
 };
 // 编辑修改本地数据
-const editDataLocal = (e, item, data, nameValue, finishTime, editFun) => {
+const changeEditLocal = (e, item, data, nameValue, finishTime, editFun) => {
+  console.log("data: ", data);
   let itemTag = item.finishTime === Date.parse(finishTime) ? true : false;
+  let data1 = todoLocalStorage();
+  console.log("data1: ", data1);
   item
     ? ((item.taskName = nameValue),
+      console.log("item: ", item),
       (item.finishTime = Date.parse(finishTime)),
       editFun(e, nameValue, itemTag, finishTime, false),
+      console.log("data: ", data),
       localStorage.setItem("todoList", JSON.stringify(data)))
     : Toast.error("编辑待办项失败");
 };
 // 回收站恢复本地数据
-const recoverRecycleLocal = (e, recoverFun) => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
+const changeRecoverLocal = (e, recoverFun) => {
+  let localTodoList = todoLocalStorage();
   const item = localTodoList.find(
     ({ taskId }) => e.target.parentNode.id == taskId
   );
@@ -101,10 +89,8 @@ const recoverRecycleLocal = (e, recoverFun) => {
   localStorage.setItem("todoList", JSON.stringify(localTodoList));
 };
 // 回收站删除本地数据
-const clearRecycleLocal = (e, clearFun) => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
+const changeClearLocal = (e, clearFun) => {
+  let localTodoList = todoLocalStorage();
   localTodoList.splice(
     localTodoList.findIndex(
       (item) => item.taskId == Number(e.target.parentNode.id)
@@ -115,10 +101,8 @@ const clearRecycleLocal = (e, clearFun) => {
   localStorage.setItem("todoList", JSON.stringify(localTodoList));
 };
 // 回收站本地清空回收站
-const clearAllDateLocal = (dom, clearAllFun) => {
-  let localTodoList = JSON.parse(localStorage.getItem("todoList"))
-    ? JSON.parse(localStorage.getItem("todoList"))
-    : [];
+const changeClearAllLocal = (dom, clearAllFun) => {
+  let localTodoList = todoLocalStorage();
   const filterDelList = localTodoList.filter((item) => item.isDel);
   filterDelList.map((listItem) => {
     localTodoList.splice(
@@ -130,12 +114,12 @@ const clearAllDateLocal = (dom, clearAllFun) => {
   localStorage.setItem("todoList", JSON.stringify(localTodoList));
 };
 export {
-  newDataLocal,
-  changeAllDataLocal,
-  changDataLocal,
-  delDataLocal,
-  editDataLocal,
-  recoverRecycleLocal,
-  clearRecycleLocal,
-  clearAllDateLocal,
+  changeCreateLocal,
+  changeSelectAllLocal,
+  changSelectLocal,
+  hanegeDelLocal,
+  changeEditLocal,
+  changeRecoverLocal,
+  changeClearLocal,
+  changeClearAllLocal,
 };

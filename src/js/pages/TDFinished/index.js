@@ -1,15 +1,15 @@
 /*
  * @Author: your name
  * @Date: 2021-06-25 16:22:06
- * @LastEditTime: 2021-08-09 15:29:51
+ * @LastEditTime: 2021-08-29 21:05:42
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/doneList.js
  */
-import { todoListEvent } from "../util/operation";
-import { createTodo, addCheckName } from "./createTodo";
-import { objKeySort, classifyTime, emptyBox } from "../util/common";
-import formatData from "../util/formate";
+import { todoListEvent } from "../../util/todoList/index";
+import { createTodo, addCheckName } from "../../components/todoItem";
+import { objKeySort, classifyTime, emptyBox } from "../../common/common";
+import formatDate from "../../common/formate";
 
 // 创建div
 const createDiv = (dom) => {
@@ -20,6 +20,7 @@ const createDiv = (dom) => {
 };
 // 创建span
 const createSpan = (dom, data) => {
+  console.log("data: ", data);
   let span = document.createElement("span");
   span.setAttribute("id", "doneData");
   span.innerText = data;
@@ -47,7 +48,7 @@ const createDom = (obj, ul) => {
 const classifyDom = (dataArr, fragment, isLogin) => {
   for (let key in dataArr) {
     let div = createDiv(fragment); //创建DIV，挂载到fragment上
-    createSpan(div, formatData(new Date(Number(key)))); //在DIV上添加span 显示日期
+    createSpan(div, formatDate(new Date(Number(key)))); //在DIV上添加span 显示日期
     createDom(dataArr[key], createUl(div, isLogin)); //创建UL 将当前日期下的所有todoList添加到当前日期的ul下
   }
 };
