@@ -4,13 +4,13 @@
  * @Autor: duanfy
  * @Date: 2021-06-23 17:18:33
  * @LastEditors: duanfy
- * @LastEditTime: 2021-08-26 15:45:15
+ * @LastEditTime: 2021-09-01 11:28:02
  */
 const formatDate = (date) => {
-  let year = date.getFullYear();
-  let month = date.getMonth() + 1;
-  let day = date.getDate();
-  let curTime =
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const curTime =
     year +
     "-" +
     month.toString().padStart(2, "0") +

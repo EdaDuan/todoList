@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 14:29:08
- * @LastEditTime: 2021-08-29 15:40:11
+ * @LastEditTime: 2021-09-01 11:49:06
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/loginDialog.js
@@ -17,20 +17,20 @@ import {
 import { USER_TEXT } from "../common/constant";
 // 创建div
 const createDiv = (dom, className) => {
-  let div = document.createElement("div");
+  const div = document.createElement("div");
   div.setAttribute("class", className);
   dom.appendChild(div);
   return div;
 };
 // 创建label
 const createLabel = (dom, text) => {
-  let label = document.createElement("label");
+  const label = document.createElement("label");
   label.innerText = text;
   dom.appendChild(label);
 };
 // 创建input
 const createInput = (dom, className, type, placeholder) => {
-  let input = document.createElement("input");
+  const input = document.createElement("input");
   input.setAttribute("id", className);
   input.setAttribute("type", type);
   input.placeholder = placeholder;
@@ -39,7 +39,7 @@ const createInput = (dom, className, type, placeholder) => {
 };
 // 创建button
 const createBtn = (dom, className, text) => {
-  let btn = document.createElement("button");
+  const btn = document.createElement("button");
   btn.setAttribute("class", className);
   btn.innerText = text;
   dom.appendChild(btn);
@@ -47,7 +47,7 @@ const createBtn = (dom, className, text) => {
 };
 // 创建登陆
 const createLogin = (dom, login, cancel) => {
-  let loginInputAccount = createDiv(dom, "login-input");
+  const loginInputAccount = createDiv(dom, "login-input");
   createLabel(loginInputAccount, "账号：");
   createInput(
     loginInputAccount,
@@ -56,7 +56,7 @@ const createLogin = (dom, login, cancel) => {
     USER_TEXT.USER_ACCOUNT
   ).addEventListener("blur", checkAccount.bind(this, "login-account"));
 
-  let loginInputPw = createDiv(dom, "login-input");
+  const loginInputPw = createDiv(dom, "login-input");
   createLabel(loginInputPw, "密码：");
   createInput(
     loginInputPw,
@@ -65,7 +65,7 @@ const createLogin = (dom, login, cancel) => {
     USER_TEXT.USER_PW
   ).addEventListener("blur", checkPw.bind(this, "login-password"));
 
-  let loginInputBtn = createDiv(dom, "login-input-btn");
+  const loginInputBtn = createDiv(dom, "login-input-btn");
   createBtn(loginInputBtn, "login-sure", "确定").addEventListener(
     "click",
     login.bind(
@@ -83,7 +83,7 @@ const createLogin = (dom, login, cancel) => {
 
 // 创建注册
 const createRegister = (dom, register, cancel) => {
-  let registerInputName = createDiv(dom, "register-input");
+  const registerInputName = createDiv(dom, "register-input");
   createLabel(registerInputName, "用户名：");
   createInput(
     registerInputName,
@@ -91,7 +91,7 @@ const createRegister = (dom, register, cancel) => {
     "text",
     USER_TEXT.USER_NAME
   ).addEventListener("blur", checkName.bind(this, "register-username"));
-  let registerInputAccount = createDiv(dom, "register-input");
+  const registerInputAccount = createDiv(dom, "register-input");
   createLabel(registerInputAccount, "账号：");
   createInput(
     registerInputAccount,
@@ -99,7 +99,7 @@ const createRegister = (dom, register, cancel) => {
     "text",
     USER_TEXT.USER_ACCOUNT
   ).addEventListener("blur", checkAccount.bind(this, "register-account"));
-  let registerInputPw = createDiv(dom, "register-input");
+  const registerInputPw = createDiv(dom, "register-input");
   createLabel(registerInputPw, "密码：");
   createInput(
     registerInputPw,
@@ -107,7 +107,7 @@ const createRegister = (dom, register, cancel) => {
     "password",
     USER_TEXT.USER_PW
   ).addEventListener("blur", checkPw.bind(this, "register-password"));
-  let loginInputBtn = createDiv(dom, "register-input-btn");
+  const loginInputBtn = createDiv(dom, "register-input-btn");
   createBtn(loginInputBtn, "register-sure", "确定").addEventListener(
     "click",
     register.bind(
@@ -129,16 +129,18 @@ const loginRegShow = (showDom, hiddenDom) => {
 };
 // 创建
 // 初始化
-let dialogBox = document.querySelector(".dialog-box");
+const dialogBox = document.querySelector(".dialog-box");
 const createDialog = (login, register) => {
-  let loginReg = createDiv(dialogBox, "login-register-dialog");
-  loginReg.addEventListener("click", (e) => {
-    window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
+  const loginReg = createDiv(dialogBox, "login-register-dialog");
+  loginReg.addEventListener("click", (element) => {
+    window.event
+      ? (window.event.cancelBubble = true)
+      : element.stopPropagation();
   });
-  let loginBtn = createBtn(loginReg, "dialog-login", "登陆");
-  let registerBtn = createBtn(loginReg, "dialog-register", "注册");
-  let loginBox = createDiv(loginReg, "loginReg-box");
-  let registerBox = createDiv(loginReg, "loginReg-box");
+  const loginBtn = createBtn(loginReg, "dialog-login", "登陆");
+  const registerBtn = createBtn(loginReg, "dialog-register", "注册");
+  const loginBox = createDiv(loginReg, "loginReg-box");
+  const registerBox = createDiv(loginReg, "loginReg-box");
   loginBtn.addEventListener(
     "click",
     loginRegShow.bind(this, loginBox, registerBox),

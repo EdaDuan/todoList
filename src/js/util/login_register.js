@@ -1,20 +1,25 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 17:21:11
- * @LastEditTime: 2021-08-29 15:37:15
+ * @LastEditTime: 2021-09-01 14:42:43
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/login.js
  */
-import { createDialog, popupLogin, closeLogin } from "../components/userDialog";
+import {
+  createDialog,
+  popupLogin,
+  closeLogin,
+} from "../components/loginRegDialog";
 import { post } from "../http/index";
 import CookieUtil from "../store/cookieUtils";
 import { todoLocalStorage } from "../store/localStorage";
 import Toast from "../common/toast";
+import { USER_TEXT } from "../common/constant";
 import { handelError } from "../common/handelError";
 // 登陆按钮的DOM
-let loginBtn = document.querySelector("#loginBtn");
-let userMsg = document.querySelector("#userMsg");
+const loginBtn = document.querySelector("#loginBtn");
+const userMsg = document.querySelector("#userMsg");
 // DOM的修改。登陆样式的修改
 const loginStatus = (isLogin) => {
   isLogin
@@ -32,56 +37,54 @@ const onCLick = (isLogin) => {
 // 询问用户是否需要将本地数据同步到当前登陆账户
 // 确认登陆
 const login = async (regLogin, accountDom, pwdDom) => {
-  if (regLogin()) {
-    let localTodoList = todoLocalStorage();
-    let tag = "";
-    let flag = confirm("是否同步本地数据?");
-    flag ? (tag = true) : (tag = false);
-    let res = await handelError(
-      post("login", {
-        account: accountDom.value,
-        pwd: pwdDom.value,
-        localTodoList,
-        tag,
-      })
-    );
-    res.ok
-      ? (CookieUtil.set("ses_token", res.ses_token),
-        CookieUtil.set(
-          "user_msg",
-          JSON.stringify({
-            name: res.data[0].userName,
-          })
-        ),
-        userBtnRender(true),
-        closeLogin(),
-        location.reload())
-      : Toast.error(res.error);
-  } else {
-    Toast.error("请输入正确的登录信息");
+  if (!regLogin()) {
+    handelError(USER_TEXT.USER_LOGIN_ERRMSG);
+    return;
   }
+  const localTodoList = todoLocalStorage();
+  let tag = "";
+  const flag = confirm("是否同步本地数据?");
+  flag ? (tag = true) : (tag = false);
+  const res = await post("login", {
+    account: accountDom.value,
+    pwd: pwdDom.value,
+    localTodoList,
+    tag,
+  });
+  if (!res.data.ok) {
+    handelError(res.data.error);
+    return;
+  }
+  CookieUtil.set("ses_token", res.data.ses_token),
+    CookieUtil.set(
+      "user_msg",
+      JSON.stringify({
+        name: res.data.data[0].userName,
+      })
+    ),
+    userBtnRender(true),
+    closeLogin(),
+    location.reload();
 };
 // 确认注册方法
 const register = async (regRes, nameDom, accountDom, pwdDom) => {
-  if (regRes()) {
-    let res = await handelError(
-      post("register", {
-        userName: nameDom.value,
-        account: accountDom.value,
-        pwd: pwdDom.value,
-      })
-    );
-    if (res.ok) {
-      Toast.show("注册成功，请登录");
-      nameDom.value = "";
-      accountDom.value = "";
-      pwdDom.value = "";
-    } else {
-      Toast.error(res.error);
-    }
-  } else {
-    Toast.error("请输入正确的注册信息");
+  if (!regRes()) {
+    handelError(USER_TEXT.USER_REGISTER_ERRMSG);
+    return;
   }
+  const res = await post("register", {
+    userName: nameDom.value,
+    account: accountDom.value,
+    pwd: pwdDom.value,
+  });
+  if (!res.data.ok) {
+    handelError(res.data.error);
+    return;
+  }
+  Toast.show(USER_TEXT.USER_REGISTER_SUCCSMSG);
+  nameDom.value = "";
+  accountDom.value = "";
+  pwdDom.value = "";
 };
 // 注销账号
 const logout = () => {

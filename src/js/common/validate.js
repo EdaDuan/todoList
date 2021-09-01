@@ -4,9 +4,11 @@
  * @Autor: duanfy
  * @Date: 2021-08-26 15:48:59
  * @LastEditors: duanfy
- * @LastEditTime: 2021-08-29 20:41:37
+ * @LastEditTime: 2021-09-01 11:44:14
  */
 import Toast from "./toast";
+import { REG_STR, CHECK_MSG } from "../common/constant";
+import { handelError } from "./handelError";
 // input为空的判断
 const inputValue = (data) => {
   if (data.length == 0 && data.trim() == "") {
@@ -20,12 +22,12 @@ const inputTrim = (string) => {
 };
 // 账号，密码用户名校验
 const checkUser = (idName, reg, toastMsg) => {
-  let inputValue = document.querySelector(`#${idName}`).value;
+  const inputValue = document.querySelector(`#${idName}`).value;
   console.log("inputValue: ", inputValue);
   if (reg.test(inputValue)) {
     return true;
   } else {
-    Toast.error(toastMsg);
+    handelError(toastMsg);
     return false;
   }
 };
@@ -34,21 +36,20 @@ let checkResName = false,
   checkResPw = false;
 // 检查注册昵称
 const checkName = (idName) => {
-  let regStr = /[\u4e00-\u9fa5|\w]{2,}/;
-  let toastMsg = "请输入至少包含两个字符的用户名";
+  const regStr = REG_STR.USERNAME_REG;
+  const toastMsg = CHECK_MSG.USERNAME_MSG;
   checkResName = checkUser(idName, regStr, toastMsg);
 };
 // 检查注册账户
 const checkAccount = (idName) => {
-  console.log("检查注册账户");
-  let regStr = /^1[3456789]\d{9}$/;
-  let toastMsg = "请输入正确的手机号";
+  const regStr = REG_STR.ACCOUNT_REG;
+  const toastMsg = CHECK_MSG.ACCOUNT_MSG;
   checkResAccount = checkUser(idName, regStr, toastMsg);
 };
 // 检查注册密码规则
 const checkPw = (idName) => {
-  let regStr = /(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,16}$/;
-  let toastMsg = "请输入包含字母,数字的6～16密码";
+  const regStr = REG_STR.PW_REG;
+  const toastMsg = CHECK_MSG.PW_MSG;
   checkResPw = checkUser(idName, regStr, toastMsg);
 };
 const getCheckLogin = () => {

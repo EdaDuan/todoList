@@ -5,9 +5,8 @@ import {
   popupDialog,
   closeDialog,
 } from "../../components/todoDialog";
-import formatDate from "../../common/formate";
+import formatDate from "../../common/format";
 import CookieUtil from "../../store/cookieUtils";
-import { getTodoList } from "../getTodoList";
 import { CACHE_KEY } from "../../common/constant";
 import Toast from "../../common/toast";
 import { cacheData } from "../../store/cache";
@@ -43,39 +42,39 @@ import {
   changeRecycleStatus,
   changeClearAllStatus,
 } from "./TD_status";
-let cache = cacheData();
+const cache = cacheData();
 
 const createTodoItem = () => {
   // 获取当前日期的时间戳
-  let createTime = Date.parse(new Date());
+  const createTime = Date.parse(new Date());
   let newtodo = {
     status: 0,
     isDel: 0,
   };
-  let taskName = inputTrim(document.querySelector("#dialog-input-name").value); //使用nameValue存储
-  let finishTime = Date.parse(
+  const taskName = inputTrim(
+    document.querySelector("#dialog-input-name").value
+  ); //使用nameValue存储
+  const finishTime = Date.parse(
     document.querySelector("#dialog-input-time").value
   );
-  if (!inputValue(taskName) && !inputValue(finishTime)) {
-    let flag = confirm("您确定添加该待办项吗?"); //弹出确认框
-    if (flag) {
-      let useMsgCookie = CookieUtil.get("ses_token");
-      newtodo = {
-        taskName: html_encode(taskName),
-        createTime,
-        finishTime,
-        ...newtodo,
-      };
-      useMsgCookie
-        ? changeCreateDB(newtodo, finishTime, changeCreateStatus)
-        : changeCreateLocal(newtodo, finishTime, changeCreateStatus);
-    }
-    closeDialog();
+  if (inputValue(taskName) || inputValue(finishTime)) return;
+  const flag = confirm("您确定添加该待办项吗?"); //弹出确认框
+  if (flag) {
+    newtodo = {
+      taskName: html_encode(taskName),
+      createTime,
+      finishTime,
+      ...newtodo,
+    };
+    CookieUtil.get("ses_token")
+      ? changeCreateDB(newtodo, finishTime, changeCreateStatus)
+      : changeCreateLocal(newtodo, finishTime, changeCreateStatus);
   }
+  closeDialog();
 };
 const selectAllList = (isLogin, element) => {
   // 根据当前点击的element判断点击的是todo的全选还是done的全选
-  let isClickAllTodo = element.target.id === "selectAllTodo" ? true : false;
+  const isClickAllTodo = element.target.id === "selectAllTodo" ? true : false;
   isLogin
     ? changeSelectAllDB(isClickAllTodo)
     : changeSelectAllLocal(isClickAllTodo);
@@ -92,40 +91,38 @@ const delTodoItem = (isLogin, element, delFun) => {
   isLogin ? chanegeDelDB(element, delFun) : hanegeDelLocal(element, delFun);
 };
 // 编辑
-const getEditData = (e, data) => {
+const getEditData = (element, data) => {
   const item = data.find(
-    ({ taskId }) => Number(e.target.parentNode.id) == taskId
+    ({ taskId }) => Number(element.target.parentNode.id) == taskId
   );
   return item;
 };
 // 编辑确认事件判断
-const editSure = (isLogin, e, item, data) => {
-  let dialogInputName = document.querySelector("#dialog-input-name");
-  let dialogInputTime = document.querySelector("#dialog-input-time");
-  let nameValue = dialogInputName.value;
-  let finishTime = dialogInputTime.value;
+const editSure = (isLogin, element, item) => {
+  const nameValue = document.querySelector("#dialog-input-name").value;
+  const finishTime = document.querySelector("#dialog-input-time").value;
   if (inputValue(nameValue) || inputValue(finishTime)) {
     return;
   }
   var flag = confirm("您确定修改该待办项吗?");
   if (flag) {
     isLogin
-      ? changeEditDB(e, item, nameValue, finishTime, changeEditStatus)
-      : changeEditLocal(e, item, data, nameValue, finishTime, changeEditStatus);
-  } else return;
+      ? changeEditDB(element, item, nameValue, finishTime, changeEditStatus)
+      : changeEditLocal(element, item, nameValue, finishTime, changeEditStatus);
+  }
   closeDialog();
 };
 // 调用编辑弹窗
 const editList = (isLogin, element) => {
   // 点击弹窗需要获取数据，自动补充到input框中
   let data = [];
-  data = getTodoList(isLogin);
-  let item = getEditData(element, data);
+  data = cache.get(CACHE_KEY.CACHE_TODO);
+  const item = getEditData(element, data);
   initDialog({
     text: "编辑任务项",
     nameValue: item.taskName,
     timeValue: formatDate(new Date(item.finishTime)),
-    okEvent: editSure.bind(this, isLogin, element, item, data),
+    okEvent: editSure.bind(this, isLogin, element, item),
   });
   popupDialog();
 };
@@ -162,7 +159,7 @@ const chooseDel = (delTag, isLogin, element) => {
   }
 };
 const todoListEvent = (listTag, delTag, isLogin, element) => {
-  let nodeName = element.target.nodeName.toLocaleLowerCase();
+  const nodeName = element.target.nodeName.toLocaleLowerCase();
   if (nodeName == "input" || nodeName == "label") {
     switch (element.target.getAttribute("name")) {
       case "todoCheck":
@@ -187,7 +184,7 @@ const recoverRecycle = (isLogin, element) => {
 // 删除回收站
 const clearRecycle = (isLogin, element) => {
   if (isLogin) {
-    let catcheData = cache.get(CACHE_KEY.CACHE_TODO);
+    const catcheData = cache.get(CACHE_KEY.CACHE_TODO);
     let item = [];
     item.push(
       catcheData.find(
@@ -200,16 +197,16 @@ const clearRecycle = (isLogin, element) => {
   }
 };
 // 清空回收站
-const clearAllRecycle = (isLogin, dom) => {
-  if (dom.lastChild.firstChild.tagName == "LI") {
+const clearAllRecycle = (isLogin, element) => {
+  if (element.lastChild.firstChild.tagName == "LI") {
     let flag = confirm("您确定清空回收站吗?"); //弹出确认框
     if (flag) {
       if (isLogin) {
         let catcheData = cache.get(CACHE_KEY.CACHE_TODO);
         const filterDelList = catcheData.filter((item) => item.isDel);
-        changeClearDB(filterDelList, dom, changeClearAllStatus);
+        changeClearDB(filterDelList, element, changeClearAllStatus);
       } else {
-        changeClearAllLocal(dom, changeClearAllStatus);
+        changeClearAllLocal(element, changeClearAllStatus);
       }
     }
   } else {

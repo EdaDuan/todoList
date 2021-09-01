@@ -1,13 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2021-07-08 16:52:16
- * @LastEditTime: 2021-08-29 10:57:44
+ * @LastEditTime: 2021-09-01 14:35:53
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/todoList.js
  */
 import { listEmpty, listNotEmpty, emptyBox } from "../../common/common";
-import formatDate from "../../common/formate";
+import formatDate from "../../common/format";
 import {
   selectAllList,
   todoListEvent,
@@ -15,18 +15,19 @@ import {
 } from "../../util/todoList/index";
 import { createTodo, addCheckName } from "../../components/todoItem";
 import { initDialog, popupDialog } from "../../components/todoDialog";
+import { TASK_EMPTY } from "../../common/constant";
 // 获取今日待办项的ul
-let conTodoUl = document.querySelector("#con-todo-ul");
-let conDoneUl = document.querySelector("#con-done-ul");
-let selectAllTodo = document.getElementById("selectAllTodo");
-let selectAllDone = document.getElementById("selectAllDone");
-let taskLabel = document.getElementsByClassName("taskLabel");
-let newDialog = document.querySelector(".tasks-new-dialog");
+const conTodoUl = document.querySelector("#con-todo-ul");
+const conDoneUl = document.querySelector("#con-done-ul");
+const selectAllTodo = document.getElementById("selectAllTodo");
+const selectAllDone = document.getElementById("selectAllDone");
+const taskLabel = document.getElementsByClassName("taskLabel");
+const newDialog = document.querySelector(".tasks-new-dialog");
 
 const todoListDataRender = (data) => {
   // 创建文档片段
-  let fragmentTodo = document.createDocumentFragment();
-  let fragmentDone = document.createDocumentFragment();
+  const fragmentTodo = document.createDocumentFragment();
+  const fragmentDone = document.createDocumentFragment();
   conTodoUl.innerHTML = "";
   conDoneUl.innerHTML = "";
   // 根据所有数据，过滤获取今日的todoList
@@ -42,13 +43,13 @@ const todoListDataRender = (data) => {
   });
   fragmentTodo.childNodes.length === 0
     ? (listEmpty(selectAllTodo, taskLabel[0]),
-      conTodoUl.appendChild(emptyBox("今日任务已全部完成～")))
+      conTodoUl.appendChild(emptyBox(TASK_EMPTY.TODAY_TODO_MSG)))
     : (listNotEmpty(selectAllTodo, taskLabel[0]),
       conTodoUl.appendChild(fragmentTodo));
 
   fragmentDone.childNodes.length === 0
     ? (listEmpty(selectAllDone, taskLabel[1]),
-      conDoneUl.appendChild(emptyBox("今日还未完成任务～")))
+      conDoneUl.appendChild(emptyBox(TASK_EMPTY.TODAY_DONE_MSG)))
     : (listNotEmpty(selectAllDone, taskLabel[1]),
       conDoneUl.appendChild(fragmentDone));
 };

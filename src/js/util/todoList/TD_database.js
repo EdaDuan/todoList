@@ -4,30 +4,32 @@
  * @Autor: duanfy
  * @Date: 2021-08-26 17:23:19
  * @LastEditors: duanfy
- * @LastEditTime: 2021-08-29 17:55:57
+ * @LastEditTime: 2021-09-01 14:35:58
  */
 import { get, post } from "../../http/index";
-import formatDate from "../../common/formate";
-import Toast from "../../common/toast";
+import formatDate from "../../common/format";
 import { CACHE_KEY } from "../../common/constant";
 import { cacheData } from "../../store/cache";
 import { handelError } from "../../common/handelError";
-let cache = cacheData();
+const cache = cacheData();
 // 新建待办项
 const changeCreateDB = async (newtodo, finishTime, changeNewStatus) => {
-  console.log("newtodo: ", newtodo);
-  let res = await handelError(post("insertTodoList", newtodo));
-  if (res.ok) {
-    let result = await handelError(get("getTodoList"));
-    if (result.ok) {
-      cache.set(CACHE_KEY.CACHE_TODO, result.data);
-      if (formatDate(new Date(finishTime)) == formatDate(new Date())) {
-        let catcheData = cache.get(CACHE_KEY.CACHE_TODO);
-        changeNewStatus(catcheData[catcheData.length - 1]);
-      }
-    } else Toast.error(result.error);
-  } else {
-    Toast.error(res.error);
+  const resInsert = await post("insertTodoList", newtodo);
+  console.log("resInsert: ", resInsert);
+  const resGet = await get("getTodoList");
+  console.log("resGet: ", resGet);
+  if (!resInsert.data.ok) {
+    handelError(resInsert.data.error);
+    return;
+  }
+  if (!resGet.data.ok) {
+    handelError(resGet.data.error);
+    return;
+  }
+  cache.set(CACHE_KEY.CACHE_TODO, resGet.data.data);
+  if (formatDate(new Date(finishTime)) == formatDate(new Date())) {
+    const catcheData = cache.get(CACHE_KEY.CACHE_TODO);
+    changeNewStatus(catcheData[catcheData.length - 1]);
   }
 };
 //获取到今日待办项完成与未完成
@@ -46,95 +48,110 @@ const filterStatus = (data, status) => {
 };
 // 全选时更改数据库数据
 const changeSelectAllDB = async (status) => {
-  let catcheData = cache.get(CACHE_KEY.CACHE_TODO);
-  let filterData = filterStatus(catcheData, status);
-  if (filterData.length !== 0) {
-    let res = await handelError(post("updateTodoList", filterData));
-    if (res.ok) {
-      let result = await handelError(get("getTodoList"));
-      result.ok
-        ? cache.set(CACHE_KEY.CACHE_TODO, result.data)
-        : Toast.error(result.error);
-    } else {
-      Toast.error(res.error);
-    }
+  const catcheData = cache.get(CACHE_KEY.CACHE_TODO);
+  const filterData = filterStatus(catcheData, status);
+  const res = await post("updateTodoList", filterData);
+  const result = await get("getTodoList");
+  if (!res.data.ok) {
+    handelError(res.data.error);
+    return;
   }
+  if (!result.data.ok) {
+    handelError(result.data.error);
+    return;
+  }
+  cache.set(CACHE_KEY.CACHE_TODO, result.data.data);
 };
 // 勾选待办项修改数据库数据
-const changSelectDB = async (e, statusFun) => {
-  let catcheData = cache.get(CACHE_KEY.CACHE_TODO);
+const changSelectDB = async (element, statusFun) => {
+  const catcheData = cache.get(CACHE_KEY.CACHE_TODO);
   const item = [];
-  item.push(catcheData.find(({ taskId }) => e.target.parentNode.id == taskId));
-  statusFun(e, true);
-  let res = await handelError(post("updateTodoList", item));
-  console.log("res: ", res);
-  if (res.ok) {
-    let result = await handelError(get("getTodoList"));
-    console.log("result: ", result);
-    result.ok
-      ? cache.set(CACHE_KEY.CACHE_TODO, result.data)
-      : Toast.error(result.error);
-  } else {
-    Toast.error(res.error);
+  item.push(
+    catcheData.find(({ taskId }) => element.target.parentNode.id == taskId)
+  );
+  statusFun(element, true);
+  const res = await post("updateTodoList", item);
+  const result = await get("getTodoList");
+  if (!res.data.ok) {
+    handelError(res.data.error);
+    return;
   }
+  if (!result.data.ok) {
+    handelError(result.data.error);
+    return;
+  }
+  cache.set(CACHE_KEY.CACHE_TODO, result.data.data);
 };
 // 假删除数据库数据
-const chanegeDelDB = async (e, delFun) => {
-  let catcheData = cache.get(CACHE_KEY.CACHE_TODO);
-  let item = catcheData.find(({ taskId }) => e.target.parentNode.id == taskId);
-  let res = await handelError(post("moveTodoToTrash", item));
-  if (res.ok) {
-    let result = await handelError(get("getTodoList"));
-    result.ok
-      ? (cache.set(CACHE_KEY.CACHE_TODO, result.data), delFun(e))
-      : Toast.error(result.error);
-  } else {
-    Toast.error(res.error);
+const chanegeDelDB = async (element, delFun) => {
+  const catcheData = cache.get(CACHE_KEY.CACHE_TODO);
+  const item = catcheData.find(
+    ({ taskId }) => element.target.parentNode.id == taskId
+  );
+  const res = await post("moveTodoToTrash", item);
+  const result = await get("getTodoList");
+  if (!res.data.ok) {
+    handelError(res.data.error);
+    return;
   }
+  if (!result.data.ok) {
+    handelError(result.data.error);
+    return;
+  }
+  cache.set(CACHE_KEY.CACHE_TODO, result.data.data);
+  delFun(element);
 };
 // 编辑 修改数据
-const changeEditDB = async (e, item, nameValue, finishTime, editFun) => {
-  let itemTag = item.finishTime === Date.parse(finishTime) ? true : false;
+const changeEditDB = async (element, item, nameValue, finishTime, editFun) => {
+  const itemTag = item.finishTime === Date.parse(finishTime) ? true : false;
   item.taskName = nameValue;
   item.finishTime = Date.parse(finishTime);
-  let res = await handelError(post("editTodoList", item));
-  if (res.ok) {
-    let result = await handelError(get("getTodoList"));
-    result.ok
-      ? (cache.set(CACHE_KEY.CACHE_TODO, result.data),
-        editFun(e, nameValue, itemTag, finishTime, true))
-      : Toast.error(result.error);
-  } else {
-    Toast.error(res.error);
+  const res = await post("editTodoList", item);
+  const result = await get("getTodoList");
+  if (!res.data.ok) {
+    handelError(res.data.error);
+    return;
   }
+  if (!result.data.ok) {
+    handelError(result.data.error);
+    return;
+  }
+  cache.set(CACHE_KEY.CACHE_TODO, result.data.data);
+  editFun(element, nameValue, itemTag, finishTime, true);
 };
 // 回收站数据库恢复数据
-const changeRecoverDB = async (e, recoverFun) => {
-  let catcheData = cache.get(CACHE_KEY.CACHE_TODO);
+const changeRecoverDB = async (element, recoverFun) => {
+  const catcheData = cache.get(CACHE_KEY.CACHE_TODO);
   const item = catcheData.find(
-    ({ taskId }) => e.target.parentNode.id == taskId
+    ({ taskId }) => element.target.parentNode.id == taskId
   );
-  let res = await handelError(post("moveTodoToTrash", item));
-  if (res.ok) {
-    let result = await handelError(get("getTodoList"));
-    result.ok
-      ? (cache.set(CACHE_KEY.CACHE_TODO, result.data), recoverFun(e))
-      : Toast.error(result.error);
-  } else {
-    Toast.error(res.error);
+  const res = await post("moveTodoToTrash", item);
+  const result = await get("getTodoList");
+  if (!res.data.ok) {
+    handelError(res.data.error);
+    return;
   }
+  if (!result.data.ok) {
+    handelError(result.data.error);
+    return;
+  }
+  cache.set(CACHE_KEY.CACHE_TODO, result.data.data);
+  recoverFun(element);
 };
 // 回收站删除数据库数据
 const changeClearDB = async (list, dom, clearFun) => {
-  let res = await handelError(post("deleteTodoList", list));
-  if (res.ok) {
-    let result = await handelError(get("getTodoList"));
-    result.ok
-      ? (cache.set(CACHE_KEY.CACHE_TODO, result.data), clearFun(dom))
-      : Toast.error(result.error);
-  } else {
-    Toast.error(res.error);
+  const res = await post("deleteTodoList", list);
+  const result = await get("getTodoList");
+  if (!res.data.ok) {
+    handelError(res.data.error);
+    return;
   }
+  if (!result.data.ok) {
+    handelError(result.data.error);
+    return;
+  }
+  cache.set(CACHE_KEY.CACHE_TODO, result.data.data);
+  clearFun(dom);
 };
 export {
   changeCreateDB,

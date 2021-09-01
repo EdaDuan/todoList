@@ -1,13 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2021-06-24 18:26:04
- * @LastEditTime: 2021-08-29 14:43:40
+ * @LastEditTime: 2021-09-01 11:27:42
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/common.js
  */
 const emptyBox = (text) => {
-  let listDiv = document.createElement("div");
+  const listDiv = document.createElement("div");
   listDiv.className = "emity-list";
   listDiv.innerHTML = text;
   return listDiv;
@@ -46,7 +46,7 @@ const objKeySort = (obj) => {
 
 // 分类
 const classifyTime = (data) => {
-  let listClassifyArr = {};
+  const listClassifyArr = {};
   for (let i = 0; i < data.length; i++) {
     // 当次循环出的变量
     let temp = data[i];

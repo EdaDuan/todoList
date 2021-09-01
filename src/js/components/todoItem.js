@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-09 10:58:24
- * @LastEditTime: 2021-08-29 20:44:20
+ * @LastEditTime: 2021-09-01 11:48:13
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/createTodo.js
@@ -9,7 +9,7 @@
 import { html_decode } from "../common/validate";
 // 创建checkbox
 const createCheckbox = (dom, data) => {
-  let checkbox = document.createElement("input");
+  const checkbox = document.createElement("input");
   checkbox.setAttribute("id", "check" + data.taskId);
   checkbox.setAttribute("type", "checkbox");
   checkbox.setAttribute("value", html_decode(data.taskName));
@@ -18,20 +18,20 @@ const createCheckbox = (dom, data) => {
 };
 // 创建lable
 const createLabel = (dom, data, name) => {
-  let label = document.createElement("label");
+  const label = document.createElement("label");
   label.setAttribute("name", name);
   label.setAttribute("for", "check" + data.taskId);
   dom.appendChild(label);
 };
 // 创建span
 const createSpan = (dom, data) => {
-  let span = document.createElement("span");
+  const span = document.createElement("span");
   span.innerText = html_decode(data.taskName);
   dom.appendChild(span);
 };
 // 创建button
 const createBtn = (dom, className, name, text) => {
-  let btn = document.createElement("input");
+  const btn = document.createElement("input");
   btn.setAttribute("class", className);
   btn.setAttribute("type", "button");
   btn.setAttribute("name", name);
@@ -40,10 +40,10 @@ const createBtn = (dom, className, name, text) => {
 };
 // 创建待办项
 const createTodo = (item) => {
-  let li = document.createElement("li");
+  const li = document.createElement("li");
   li.className = "con-task-li";
   li.setAttribute("id", item.taskId);
-  let checkbox = createCheckbox(li, item);
+  const checkbox = createCheckbox(li, item);
   createLabel(li, item, "todoCheck");
   createSpan(li, item);
   createBtn(li, "con-task-delBtn", "todoDel", "删除");

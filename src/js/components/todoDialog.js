@@ -4,33 +4,32 @@
  * @Autor: duanfy
  * @Date: 2021-06-29 17:31:24
  * @LastEditors: duanfy
- * @LastEditTime: 2021-08-29 21:02:23
+ * @LastEditTime: 2021-09-01 11:47:49
  */
 import { html_decode } from "../common/validate";
 // 创建div
 const createDiv = (dom, className) => {
-  let div = document.createElement("div");
+  const div = document.createElement("div");
   div.setAttribute("class", className);
   dom.appendChild(div);
   return div;
 };
 // 创建span
 const createSpan = (dom, text) => {
-  let span = document.createElement("span");
+  const span = document.createElement("span");
   span.setAttribute("class", "dialog-tip");
   span.innerText = text;
   dom.appendChild(span);
 };
 // 创建label
 const createLabel = (dom, text) => {
-  let label = document.createElement("label");
+  const label = document.createElement("label");
   label.innerText = text;
   dom.appendChild(label);
 };
 // 创建input
 const createInput = (dom, className, value, type) => {
-  console.log("value: ", value);
-  let input = document.createElement("input");
+  const input = document.createElement("input");
   input.setAttribute("id", className);
   input.setAttribute("type", type);
   input.placeholder = "例：明天有早会";
@@ -39,7 +38,7 @@ const createInput = (dom, className, value, type) => {
 };
 // 创建button
 const createBtn = (dom, clickEvent, className, text) => {
-  let btn = document.createElement("button");
+  const btn = document.createElement("button");
   btn.setAttribute("class", className);
   btn.addEventListener("click", clickEvent, false);
   btn.innerText = text;
@@ -48,23 +47,25 @@ const createBtn = (dom, clickEvent, className, text) => {
 
 // 创建
 const createDialog = (dom, text, nameValue, timeValue, okBtn, cancelBtn) => {
-  let dialogCon = createDiv(dom, "dialog-con");
-  dialogCon.addEventListener("click", (e) => {
-    window.event ? (window.event.cancelBubble = true) : e.stopPropagation();
+  const dialogCon = createDiv(dom, "dialog-con");
+  dialogCon.addEventListener("click", (element) => {
+    window.event
+      ? (window.event.cancelBubble = true)
+      : element.stopPropagation();
   });
   createSpan(dialogCon, text);
-  let dialogInputName = createDiv(dialogCon, "dialog-input");
+  const dialogInputName = createDiv(dialogCon, "dialog-input");
   createLabel(dialogInputName, "待办项：");
   createInput(dialogInputName, "dialog-input-name", nameValue, "text");
-  let dialogInputTime = createDiv(dialogCon, "dialog-input");
+  const dialogInputTime = createDiv(dialogCon, "dialog-input");
   createLabel(dialogInputTime, "完成时间：");
   createInput(dialogInputTime, "dialog-input-time", timeValue, "date");
-  let dialogInputBtn = createDiv(dialogCon, "dialog-input-btn");
+  const dialogInputBtn = createDiv(dialogCon, "dialog-input-btn");
   createBtn(dialogInputBtn, okBtn, "dialog-sure", "确定");
   createBtn(dialogInputBtn, cancelBtn, "dialog-cance", "取消");
 };
 // 初始化
-let dialogBox = document.querySelector(".dialog-box");
+const dialogBox = document.querySelector(".dialog-box");
 const initDialog = (options) => {
   const { text, nameValue, timeValue, okEvent } = options;
   createDialog(dialogBox, text, nameValue, timeValue, okEvent, closeDialog);
