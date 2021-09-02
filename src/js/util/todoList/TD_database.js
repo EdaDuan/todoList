@@ -4,7 +4,7 @@
  * @Autor: duanfy
  * @Date: 2021-08-26 17:23:19
  * @LastEditors: duanfy
- * @LastEditTime: 2021-09-01 14:35:58
+ * @LastEditTime: 2021-09-01 15:20:21
  */
 import { get, post } from "../../http/index";
 import formatDate from "../../common/format";
@@ -15,9 +15,7 @@ const cache = cacheData();
 // 新建待办项
 const changeCreateDB = async (newtodo, finishTime, changeNewStatus) => {
   const resInsert = await post("insertTodoList", newtodo);
-  console.log("resInsert: ", resInsert);
   const resGet = await get("getTodoList");
-  console.log("resGet: ", resGet);
   if (!resInsert.data.ok) {
     handelError(resInsert.data.error);
     return;

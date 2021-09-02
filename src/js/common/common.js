@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-24 18:26:04
- * @LastEditTime: 2021-09-01 11:27:42
+ * @LastEditTime: 2021-09-02 11:21:59
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/common.js
@@ -33,11 +33,11 @@ const listNotEmpty = (btnOperate, taskLabel) => {
 // 排序
 const objKeySort = (obj) => {
   //排序的函数
-  var newkey = Object.keys(obj).sort(function (a, b) {
+  const newkey = Object.keys(obj).sort(function (a, b) {
     return Number(b) - Number(a);
   });
-  var newObj = {}; //创建一个新的对象，用于存放排好序的键值对
-  for (var i = 0; i < newkey.length; i++) {
+  let newObj = {}; //创建一个新的对象，用于存放排好序的键值对
+  for (let i = 0; i < newkey.length; i++) {
     //遍历newkey数组
     newObj[newkey[i]] = obj[newkey[i]]; //向新创建的对象中按照排好的顺序依次增加键值对
   }

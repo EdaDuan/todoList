@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-14 15:32:01
- * @LastEditTime: 2021-08-18 11:34:47
+ * @LastEditTime: 2021-09-02 11:22:13
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/cookieUtils.js
@@ -11,12 +11,12 @@
 const CookieUtil = {
   //获取
   get: function (name) {
-    var cookieName = encodeURIComponent(name) + "=",
+    let cookieName = encodeURIComponent(name) + "=",
       cookieStart = document.cookie.indexOf(cookieName),
       cookieValue = null;
 
     if (cookieStart > -1) {
-      var cookieEnd = document.cookie.indexOf(";", cookieStart);
+      let cookieEnd = document.cookie.indexOf(";", cookieStart);
       if (cookieEnd == -1) {
         cookieEnd = document.cookie.length;
       }
@@ -30,7 +30,7 @@ const CookieUtil = {
   //设置
   set: function (name, value, expires, path, domain, secure) {
     // name和value是必须，其他参数可以不设
-    var cookieText = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+    let cookieText = encodeURIComponent(name) + "=" + encodeURIComponent(value);
 
     if (expires instanceof Date) {
       cookieText += "; expires=" + expires.toGMTString();

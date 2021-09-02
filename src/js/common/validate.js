@@ -4,7 +4,7 @@
  * @Autor: duanfy
  * @Date: 2021-08-26 15:48:59
  * @LastEditors: duanfy
- * @LastEditTime: 2021-09-01 11:44:14
+ * @LastEditTime: 2021-09-02 11:27:09
  */
 import Toast from "./toast";
 import { REG_STR, CHECK_MSG } from "../common/constant";
@@ -23,7 +23,6 @@ const inputTrim = (string) => {
 // 账号，密码用户名校验
 const checkUser = (idName, reg, toastMsg) => {
   const inputValue = document.querySelector(`#${idName}`).value;
-  console.log("inputValue: ", inputValue);
   if (reg.test(inputValue)) {
     return true;
   } else {
@@ -63,9 +62,10 @@ const html_encode = (string) => {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
+    .replace(/\ /g, "&nbsp;")
     .replace(/\"/g, "&quot;")
     .replace(/\'/g, "&#039;")
-    .replace(/\//g, "&#x2f")
+    .replace(/\//g, "&#x2f;")
     .replace(/\n/g, "<br/>");
 };
 const html_decode = (string) => {
@@ -73,8 +73,9 @@ const html_decode = (string) => {
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
+    .replace(/&nbsp;/g, " ")
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
+    .replace(/&#039;/g, "'")
     .replace(/&#x2f/g, "/")
     .replace(/<br\/>/g, "\n");
 };

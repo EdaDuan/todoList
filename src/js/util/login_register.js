@@ -1,38 +1,35 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 17:21:11
- * @LastEditTime: 2021-09-01 14:42:43
+ * @LastEditTime: 2021-09-02 14:34:30
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/login.js
  */
-import {
-  createDialog,
-  popupLogin,
-  closeLogin,
-} from "../components/loginRegDialog";
+import { createDialog, closeLogin } from "../components/loginRegDialog";
 import { post } from "../http/index";
 import CookieUtil from "../store/cookieUtils";
 import { todoLocalStorage } from "../store/localStorage";
 import Toast from "../common/toast";
-import { USER_TEXT } from "../common/constant";
+import { USER_TEXT, COMFIRM } from "../common/constant";
 import { handelError } from "../common/handelError";
+import { html_encode, html_decode } from "../common/validate";
 // 登陆按钮的DOM
 const loginBtn = document.querySelector("#loginBtn");
 const userMsg = document.querySelector("#userMsg");
 // DOM的修改。登陆样式的修改
 const loginStatus = (isLogin) => {
   isLogin
-    ? ((userMsg.firstElementChild.innerHTML = JSON.parse(
-        CookieUtil.get("user_msg")
-      ).name),
+    ? ((userMsg.firstElementChild.innerHTML = html_decode(
+        JSON.parse(CookieUtil.get("user_msg")).name
+      )),
       (userMsg.lastElementChild.innerHTML = "注销"))
     : ((userMsg.firstElementChild.innerHTML = ""),
       (userMsg.lastElementChild.innerHTML = "登陆/注册"));
 };
 // 修改弹窗的点击事件
 const onCLick = (isLogin) => {
-  isLogin ? logout() : (createDialog(login, register), popupLogin());
+  isLogin ? logout() : createDialog(login, register);
 };
 // 询问用户是否需要将本地数据同步到当前登陆账户
 // 确认登陆
@@ -43,7 +40,7 @@ const login = async (regLogin, accountDom, pwdDom) => {
   }
   const localTodoList = todoLocalStorage();
   let tag = "";
-  const flag = confirm("是否同步本地数据?");
+  const flag = confirm(COMFIRM.COMFIRM_SYNC_MSG);
   flag ? (tag = true) : (tag = false);
   const res = await post("login", {
     account: accountDom.value,
@@ -62,7 +59,7 @@ const login = async (regLogin, accountDom, pwdDom) => {
         name: res.data.data[0].userName,
       })
     ),
-    userBtnRender(true),
+    loginRegRender(true),
     closeLogin(),
     location.reload();
 };
@@ -73,9 +70,9 @@ const register = async (regRes, nameDom, accountDom, pwdDom) => {
     return;
   }
   const res = await post("register", {
-    userName: nameDom.value,
-    account: accountDom.value,
-    pwd: pwdDom.value,
+    userName: html_encode(nameDom.value),
+    account: html_encode(accountDom.value),
+    pwd: html_encode(pwdDom.value),
   });
   if (!res.data.ok) {
     handelError(res.data.error);
@@ -88,16 +85,16 @@ const register = async (regRes, nameDom, accountDom, pwdDom) => {
 };
 // 注销账号
 const logout = () => {
-  var flag = confirm("您确定退出账号吗?");
+  const flag = confirm(COMFIRM.COMFIRM_LOGOUT_MSG);
   if (flag) {
     CookieUtil.unset("ses_token");
     CookieUtil.unset("user_msg");
-    userBtnRender(false), location.reload();
+    loginRegRender(false), location.reload();
   }
 };
 // 登陆弹窗
-const userBtnRender = (isLogin) => {
+const loginRegRender = (isLogin) => {
   loginStatus(isLogin);
   loginBtn.addEventListener("click", onCLick.bind(this, isLogin));
 };
-export { userBtnRender };
+export { loginRegRender };

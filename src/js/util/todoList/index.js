@@ -7,7 +7,7 @@ import {
 } from "../../components/todoDialog";
 import formatDate from "../../common/format";
 import CookieUtil from "../../store/cookieUtils";
-import { CACHE_KEY } from "../../common/constant";
+import { CACHE_KEY, COMFIRM } from "../../common/constant";
 import Toast from "../../common/toast";
 import { cacheData } from "../../store/cache";
 import {
@@ -58,7 +58,7 @@ const createTodoItem = () => {
     document.querySelector("#dialog-input-time").value
   );
   if (inputValue(taskName) || inputValue(finishTime)) return;
-  const flag = confirm("您确定添加该待办项吗?"); //弹出确认框
+  const flag = confirm(COMFIRM.COMFIRM_ADD_MSG); //弹出确认框
   if (flag) {
     newtodo = {
       taskName: html_encode(taskName),
@@ -104,7 +104,7 @@ const editSure = (isLogin, element, item) => {
   if (inputValue(nameValue) || inputValue(finishTime)) {
     return;
   }
-  var flag = confirm("您确定修改该待办项吗?");
+  const flag = confirm(COMFIRM.COMFIRM_EDIT_MSG);
   if (flag) {
     isLogin
       ? changeEditDB(element, item, nameValue, finishTime, changeEditStatus)
@@ -199,7 +199,7 @@ const clearRecycle = (isLogin, element) => {
 // 清空回收站
 const clearAllRecycle = (isLogin, element) => {
   if (element.lastChild.firstChild.tagName == "LI") {
-    let flag = confirm("您确定清空回收站吗?"); //弹出确认框
+    let flag = confirm(COMFIRM.COMFIRM_CLEAR_MSG); //弹出确认框
     if (flag) {
       if (isLogin) {
         let catcheData = cache.get(CACHE_KEY.CACHE_TODO);

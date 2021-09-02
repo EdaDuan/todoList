@@ -4,7 +4,7 @@
  * @Autor: duanfy
  * @Date: 2021-08-26 09:57:10
  * @LastEditors: duanfy
- * @LastEditTime: 2021-09-01 14:31:10
+ * @LastEditTime: 2021-09-02 14:30:36
  */
 
 const CACHE_KEY = {
@@ -40,4 +40,19 @@ const TASK_EMPTY = {
   UNFINISH_MSG: "所有待办项已完成～",
   RECYCLE_MSG: "回收站为空～",
 };
-export { CACHE_KEY, USER_TEXT, LOCAL_ERRMSG, REG_STR, CHECK_MSG, TASK_EMPTY };
+const COMFIRM = {
+  COMFIRM_SYNC_MSG: "是否同步本地数据?",
+  COMFIRM_LOGOUT_MSG: "您确定退出账号吗?",
+  COMFIRM_ADD_MSG: "您确定添加该待办项吗?",
+  COMFIRM_EDIT_MSG: "您确定修改该待办项吗?",
+  COMFIRM_CLEAR_MSG: "您确定清空回收站吗?",
+};
+export {
+  CACHE_KEY,
+  USER_TEXT,
+  LOCAL_ERRMSG,
+  REG_STR,
+  CHECK_MSG,
+  TASK_EMPTY,
+  COMFIRM,
+};

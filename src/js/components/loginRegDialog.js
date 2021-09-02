@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-13 14:29:08
- * @LastEditTime: 2021-09-01 11:49:06
+ * @LastEditTime: 2021-09-02 11:25:32
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/util/loginDialog.js
@@ -155,6 +155,7 @@ const createDialog = (login, register) => {
   createRegister(registerBox, register, closeLogin);
   loginRegShow(loginBox, registerBox);
   dialogBox.addEventListener("click", closeLogin, false);
+  popupLogin();
 };
 // 销毁
 const destoryLogin = () => {
