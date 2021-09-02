@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-07-08 16:52:16
- * @LastEditTime: 2021-09-01 14:35:53
+ * @LastEditTime: 2021-09-02 18:38:42
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/todoList.js
@@ -16,6 +16,7 @@ import {
 import { createTodo, addCheckName } from "../../components/todoItem";
 import { initDialog, popupDialog } from "../../components/todoDialog";
 import { TASK_EMPTY } from "../../common/constant";
+
 // 获取今日待办项的ul
 const conTodoUl = document.querySelector("#con-todo-ul");
 const conDoneUl = document.querySelector("#con-done-ul");
@@ -75,6 +76,7 @@ const todoList = (data, isLogin) => {
     selectAllList.bind(this, isLogin),
     false
   );
+
   newDialog.addEventListener("click", () => {
     initDialog({
       text: "新建任务项",

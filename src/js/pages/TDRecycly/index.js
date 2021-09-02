@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-30 18:57:26
- * @LastEditTime: 2021-09-01 14:15:11
+ * @LastEditTime: 2021-09-02 16:08:55
  * @LastEditors: duanfy
  * @Description: In User Settings Edit
  * @FilePath: /todoList/src/js/components/recycleList.js
@@ -14,6 +14,7 @@ import {
   clearAllRecycle,
 } from "../../util/todoList/index";
 import { TASK_EMPTY } from "../../common/constant";
+
 const recycleEvent = (isLogin, element) => {
   if (element.target.nodeName.toLocaleLowerCase() == "input") {
     switch (element.target.id) {

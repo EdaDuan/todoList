@@ -4,7 +4,7 @@
  * @Autor: duanfy
  * @Date: 2021-08-26 17:20:59
  * @LastEditors: duanfy
- * @LastEditTime: 2021-09-01 14:29:41
+ * @LastEditTime: 2021-09-02 16:07:47
  */
 import {
   removeEmptyBox,
@@ -15,6 +15,7 @@ import {
 import { createTodo, addCheckName } from "../../components/todoItem";
 import { addTimeBoxNotDone, addTimeBoxDone } from "../../components/dateBox";
 import { TASK_EMPTY } from "../../common/constant";
+
 const conTodoUl = document.querySelector("#con-todo-ul");
 const conDoneUl = document.querySelector("#con-done-ul");
 const selectAllTodo = document.querySelector("#selectAllTodo");
